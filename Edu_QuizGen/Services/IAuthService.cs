@@ -1,12 +1,16 @@
-﻿using Edu_QuizGen.Contracts.Authentication;
-
-namespace Edu_QuizGen.Services;
+﻿namespace Edu_QuizGen.Services;
 
 public interface IAuthService
 {
-    Task<AuthResponse> GetTokenAsync(string email, string passowrd, CancellationToken cancellationToken); 
- 
-    Task<AuthResponse> GetRefreshTokenAsync(string token, string RefreshToken, CancellationToken cancellationToken); 
-    
-    Task<bool> RevokeRefreshTokenAsync(string token, string RefreshToken, CancellationToken cancellationToken); 
+    Task<Result<AuthResponse>> GetTokenAsync(string email, string passowrd, CancellationToken cancellationToken);
+
+    Task<Result<AuthResponse>> GetRefreshTokenAsync(string token, string RefreshToken, CancellationToken cancellationToken);
+
+    Task<Result> RevokeRefreshTokenAsync(string token, string RefreshToken, CancellationToken cancellationToken);
+
+    Task<Result> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken);
+
+    Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken);
+
+    Task<Result> ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request);
 }

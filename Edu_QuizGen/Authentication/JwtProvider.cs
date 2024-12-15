@@ -1,11 +1,4 @@
-﻿
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-
-namespace Edu_QuizGen.Authentication;
+﻿namespace Edu_QuizGen.Authentication;
 
 public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
@@ -26,7 +19,6 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 
         var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-        var expiresin = 30;
 
         var token = new JwtSecurityToken(
             claims:Claims,
@@ -36,7 +28,7 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
             signingCredentials:signingCredentials
             );
 
-        return (new JwtSecurityTokenHandler().WriteToken(token), expiresin);
+        return (token: new JwtSecurityTokenHandler().WriteToken(token), expiresIn: _options.ExpiryMinutes * 60);
     }
 
     public string? ValidateToken(string token)

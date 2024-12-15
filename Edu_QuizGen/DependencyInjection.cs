@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
-using System.Text;
-
-namespace Edu_QuizGen;
+﻿namespace Edu_QuizGen;
 
 public static class DependencyInjection
 {
@@ -11,14 +7,17 @@ public static class DependencyInjection
     {
         services.AddControllers();
 
-        services.AddCors(options =>
-        options.AddDefaultPolicy(builder =>
-        builder
-            .WithOrigins(configuration.GetSection("AllowedOrigins").Get<string[]>()!)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            )
+        services.AddCors(options => {
+            options.AddDefaultPolicy(builder =>
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                );
+            //options.AddPolicy("CustomPolicy",builder=> builder.)
+            }
         );
+
 
         services.AddAuthConfig(configuration);
 
@@ -95,7 +94,7 @@ public static class DependencyInjection
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting?.Key!)),
                 ValidIssuer = jwtSetting.Issuer,
                 ValidAudience = jwtSetting.Audience
             };
@@ -134,10 +133,10 @@ public static class DependencyInjection
         services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequiredLength = 8;
-            options.SignIn.RequireConfirmedEmail = true;
-            options.User.RequireUniqueEmail = false;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.User.RequireUniqueEmail = true;
 
-            //Default Values to the lockOut
+            //Default Values to the lockout
             options.Lockout.AllowedForNewUsers = true;
             options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);

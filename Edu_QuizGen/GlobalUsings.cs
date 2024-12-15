@@ -10,3 +10,13 @@ global using FluentValidation;
 global using FluentValidation.AspNetCore;
 global using Edu_QuizGen.Authentication;
 global using Microsoft.IdentityModel.Tokens;
+global using Edu_QuizGen.Abstractions;
+global using Edu_QuizGen.Contracts.Authentication;
+global using System.Security.Cryptography;
+global using Microsoft.Extensions.Options;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;
+global using System.Text;
+
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+

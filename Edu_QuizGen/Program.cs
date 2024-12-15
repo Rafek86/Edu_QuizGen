@@ -40,7 +40,6 @@ namespace Edu_QuizGen
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();

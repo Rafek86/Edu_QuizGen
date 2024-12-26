@@ -1,14 +1,21 @@
 ﻿using Edu_QuizGen.Errors;
+using Edu_QuizGen.Helpers;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Edu_QuizGen.Services;
 
 public class AuthService(UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
+    IEmailSender emailSender,
+    IHttpContextAccessor httpContextAccessor,
     IJwtProvider jwtProvider) : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly IEmailSender _emailSender = emailSender;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly IJwtProvider _jwtProvider = jwtProvider;
     private readonly int _refreshTokenExpiryDays = 14;
 
@@ -147,7 +154,9 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             var code =await _userManager.GenerateEmailConfirmationTokenAsync(user); 
             code=WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-            //SendEmail
+            //TODO:: SendEmail 
+            await SendConfirmationEmail(user, code);
+
             return Result.Success(code);    
         }
 
@@ -205,8 +214,22 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-        //SendEmail
+        //TODO:: SendEmail 
+        await SendConfirmationEmail(user, code);
+
         return Result.Success(code);    
+    }
+    private async Task SendConfirmationEmail(ApplicationUser user,string code) {
+
+        var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
+
+        var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
+            new Dictionary<string, string> {
+                {"{{name}}",user.FirstName },
+                    { "{{action_url}}", $"{origin}/Auth/confirm-email?UserId={user.Id}&code={code}" }
+            }
+            );
+        await _emailSender.SendEmailAsync(user.Email, "Confirm Email by Quiz_Gen_Team✅", emailBody);
     }
     private string GenerateRefreshToken() =>
          Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));

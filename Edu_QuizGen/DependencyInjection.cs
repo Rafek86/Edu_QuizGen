@@ -1,4 +1,8 @@
-﻿namespace Edu_QuizGen;
+﻿using Edu_QuizGen.Settings;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Edu_QuizGen;
 
 public static class DependencyInjection
 {
@@ -12,8 +16,7 @@ public static class DependencyInjection
             builder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader()
-                );
+                .AllowAnyHeader());
             //options.AddPolicy("CustomPolicy",builder=> builder.)
             }
         );
@@ -33,6 +36,10 @@ public static class DependencyInjection
             .AddFluentValidationConfig();
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<IEmailSender, EmailService>();
+        services.AddHttpContextAccessor();  
 
         services.AddProblemDetails();
 
@@ -101,34 +108,10 @@ public static class DependencyInjection
         
         });
 
-        ////services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
-        //services.AddOptions<JwtOptions>()
-        //    .BindConfiguration(JwtOptions.SectionName)
-        //    .ValidateDataAnnotations()
-        //    .ValidateOnStart();
-
-        //var jwtSettings = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
-
-        //services.AddAuthentication(options =>
-        //{
-        //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //})
-        //.AddJwtBearer(o =>
-        //{
-        //    o.SaveToken = true;
-        //    o.TokenValidationParameters = new TokenValidationParameters
-        //    {
-        //        ValidateIssuerSigningKey = true,
-        //        ValidateIssuer = true,
-        //        ValidateAudience = true,
-        //        ValidateLifetime = true,
-        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key!)),
-        //        ValidIssuer = jwtSettings?.Issuer,
-        //        ValidAudience = jwtSettings?.Audience
-        //    };
-        //});
-
+        services.AddOptions<MailSettings>()
+            .BindConfiguration(MailSettings.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.Configure<IdentityOptions>(options =>
         {

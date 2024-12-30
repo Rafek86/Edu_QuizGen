@@ -13,17 +13,14 @@ public class EmailService(IOptions<MailSettings> mailSettings) : IEmailSender
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
         var message = new MimeMessage { 
-        
-        Sender=MailboxAddress.Parse(_mailSettings.SenderEmail),
-        Subject=subject,    
-
+          Sender=MailboxAddress.Parse(_mailSettings.SenderEmail),
+          Subject=subject,    
         };
 
         message.To.Add(MailboxAddress.Parse(email));
     
         var builder =new BodyBuilder { 
-        
-        HtmlBody=htmlMessage
+          HtmlBody=htmlMessage
         };
 
         message.Body = builder.ToMessageBody();

@@ -41,6 +41,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
                 Token = refreshToken,
                 ExpiresOn = refreshTokenExpirydays
             });
+
             await _userManager.UpdateAsync(user);
 
             var response = new AuthResponse(user.Id, user.Email!, user.FirstName, user.LastName, token, expiresin, refreshToken, refreshTokenExpirydays);
@@ -114,8 +115,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         return Result.Success();        
     }
 
-
-
     public async Task<Result> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken) 
     {
         var emailExist = await _userManager.Users.AnyAsync(x => x.Email == request.Email);
@@ -157,6 +156,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             //TODO:: SendEmail 
             await SendConfirmationEmail(user, code);
 
+            //Just in the DEV Level
             return Result.Success(code);    
         }
 
@@ -165,8 +165,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         
          return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
     }   
-    
-    
+        
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken) 
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
@@ -199,6 +198,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         
          return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
     }
+    
     public async Task<Result> ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request) 
     {
 
@@ -229,6 +229,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             return Result.Failure(UserErrors.EmailNotConfirmed);
 
         var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        
         code =WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); 
 
         await SendResetPasswordEmail(user, code);   
@@ -268,7 +269,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
             new Dictionary<string, string> {
-                {"{{name}}",user.FirstName },
+                    {"{{name}}",user.FirstName },
                     { "{{action_url}}", $"{origin}/Auth/confirm-email?UserId={user.Id}&code={code}" }
             }
             );
@@ -281,7 +282,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var emailBody = EmailBodyBuilder.GenerateEmailBody("ForgetPassword",
             new Dictionary<string, string> {
-                {"{{name}}",user.FirstName },
+                    {"{{name}}",user.FirstName },
                     { "{{action_url}}", $"{origin}/Auth/forgetPassword?email={user.Email}&code={code}" }
             }
             );

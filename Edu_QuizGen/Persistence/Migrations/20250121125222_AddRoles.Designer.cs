@@ -4,6 +4,7 @@ using Edu_QuizGen.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_QuizGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250121125222_AddRoles")]
+    partial class AddRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,35 +56,6 @@ namespace Edu_QuizGen.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0194895d-f050-7461-b24f-89bd825b3846",
-                            ConcurrencyStamp = "01948960-9b3e-7104-bd12-5083222a2c8a",
-                            IsDefault = false,
-                            IsDeleted = false,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "0194895d-f050-7461-b24f-89be04b4f5ad",
-                            ConcurrencyStamp = "01948960-9b3e-7104-bd12-5084e4273ede",
-                            IsDefault = true,
-                            IsDeleted = false,
-                            Name = "Student",
-                            NormalizedName = "STUDENT"
-                        },
-                        new
-                        {
-                            Id = "0194895d-f050-7461-b24f-89bf1364a1ba",
-                            ConcurrencyStamp = "01948960-9b3e-7104-bd12-508568b47c8c",
-                            IsDefault = false,
-                            IsDeleted = false,
-                            Name = "Teacher",
-                            NormalizedName = "TEACHER"
-                        });
                 });
 
             modelBuilder.Entity("Edu_QuizGen.Models.ApplicationUser", b =>
@@ -157,26 +131,6 @@ namespace Edu_QuizGen.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "019488ef-b9bd-7b5c-adeb-997f2443d22b",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "019488f4-5437-7bd0-88a4-491c73dde6ea",
-                            Email = "admin@GuizGen.com",
-                            EmailConfirmed = true,
-                            FirstName = "QuizGen_Admin",
-                            LastName = "Team",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@GUIZGEN.COM",
-                            NormalizedUserName = "ADMIN@GUIZGEN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtro3sJaSqAzR2f668Vh5b02gWFbirbPU1kIhuI8uw5CXksM9BpfUXrpAjkIdnaeA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "GE49A7A12DC0F4459930840D718724172",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@GuizGen.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -264,13 +218,6 @@ namespace Edu_QuizGen.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "019488ef-b9bd-7b5c-adeb-997f2443d22b",
-                            RoleId = "0194895d-f050-7461-b24f-89bd825b3846"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

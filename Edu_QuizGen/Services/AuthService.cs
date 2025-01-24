@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Errors;
+﻿using Edu_QuizGen.Abstractions.Consts;
+using Edu_QuizGen.Errors;
 using Edu_QuizGen.Helpers;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
@@ -31,7 +32,10 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         if (result.Succeeded)
         {
-            var (token, expiresin) = _jwtProvider.GenrateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            var (token, expiresin) = _jwtProvider.GenrateToken(user,role!);
 
             var refreshToken = GenerateRefreshToken();
             var refreshTokenExpirydays = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
@@ -72,7 +76,10 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
 
-        var (Token, expiresin) = _jwtProvider.GenrateToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault();
+
+        var (Token, expiresin) = _jwtProvider.GenrateToken(user,role!);
 
         var newRefreshToken =GenerateRefreshToken();
         var newRefreshTokenExpirydays = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays); 
@@ -190,8 +197,12 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var result =await _userManager.ConfirmEmailAsync(user, code);   
 
-        if (result.Succeeded) { 
+        if (result.Succeeded) {
+
+            await _userManager.AddToRoleAsync(user, DefaultRoles.Student);
+
             return Result.Success();    
+       
         }
 
          var error = result.Errors.First();
@@ -217,6 +228,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         //TODO:: SendEmail 
         await SendConfirmationEmail(user, code);
 
+        //Just in the DEV Level
         return Result.Success(code);    
     }
 

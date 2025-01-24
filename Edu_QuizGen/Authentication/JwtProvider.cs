@@ -4,14 +4,15 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
     private readonly JwtOptions _options = options.Value;
 
-    public (string token, int expiresIn) GenrateToken(ApplicationUser user)
+    public (string token, int expiresIn) GenrateToken(ApplicationUser user,string role)
     {
         Claim[] Claims = [
             new (JwtRegisteredClaimNames.Sub,user.Id),
             new (JwtRegisteredClaimNames.Email,user.Email!),
             new (JwtRegisteredClaimNames.GivenName,user.FirstName),
             new (JwtRegisteredClaimNames.FamilyName,user.LastName),
-            new (JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+            new (JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+            new (nameof(ClaimTypes.Role),role)  
             ];
 
 

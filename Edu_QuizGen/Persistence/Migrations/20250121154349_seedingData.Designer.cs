@@ -4,6 +4,7 @@ using Edu_QuizGen.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_QuizGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250121154349_seedingData")]
+    partial class seedingData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace Edu_QuizGen.Migrations
                         {
                             Id = "0194895d-f050-7461-b24f-89be04b4f5ad",
                             ConcurrencyStamp = "01948960-9b3e-7104-bd12-5084e4273ede",
-                            IsDefault = true,
+                            IsDefault = false,
                             IsDeleted = false,
                             Name = "Student",
                             NormalizedName = "STUDENT"
@@ -171,7 +174,7 @@ namespace Edu_QuizGen.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GUIZGEN.COM",
                             NormalizedUserName = "ADMIN@GUIZGEN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtro3sJaSqAzR2f668Vh5b02gWFbirbPU1kIhuI8uw5CXksM9BpfUXrpAjkIdnaeA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECq5HEmDQPK3OlfsqQWjDJ7iWy09/tUrCN21Un1O4j9OMVILfdlKGtk9+MYN24kSwA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "GE49A7A12DC0F4459930840D718724172",
                             TwoFactorEnabled = false,

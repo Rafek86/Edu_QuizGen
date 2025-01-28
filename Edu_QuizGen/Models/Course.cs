@@ -9,6 +9,6 @@
         public string code { get; set; }
 
         public IEnumerable<Teacher> Teachers { get; set; } = new List<Teacher>();
-        public IEnumerable<Student> students { get; set; } = new List<Student>();
+        public IEnumerable<StudentCourse> studentCourses { get; set; } = new List<StudentCourse>();
     }
 }

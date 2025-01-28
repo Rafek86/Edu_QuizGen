@@ -294,7 +294,7 @@ namespace Edu_QuizGen.Migrations
 
             modelBuilder.Entity("Edu_QuizGen.Models.ApplicationUser", b =>
                 {
-                    b.OwnsMany("Edu_QuizGen.Models.RefreshToken", "RefreshTokens", b1 =>
+                    b.OwnsMany("Edu_QuizGen.Models.ApplicationUser.RefreshTokens#Edu_QuizGen.Models.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");

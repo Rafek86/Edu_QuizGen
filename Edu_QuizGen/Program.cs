@@ -24,6 +24,15 @@ namespace Edu_QuizGen
             //builder.Services.AddScoped<IAuthService, AuthService>();    
             builder.Services.AddDependencies(builder.Configuration);
 
+            // to able frontend to access the api
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    });
+            });
 
             var app = builder.Build();
             
@@ -35,6 +44,7 @@ namespace Edu_QuizGen
 
 
             // Configure the HTTP request pipeline.
+            app.UseCors("AllowAllOrigins");
 
             app.UseHttpsRedirection();
 

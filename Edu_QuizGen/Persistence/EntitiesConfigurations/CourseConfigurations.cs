@@ -8,8 +8,9 @@
                 .WithOne()
                 .HasForeignKey(c => c.CourseId);
 
-            builder.HasMany(c => c.Teachers)
-                .WithMany(t => t.courses);
+            builder.HasMany(c => c.teacherCourses)
+                .WithOne()
+                .HasForeignKey(c => c.CourseId);
         }
     }
 }

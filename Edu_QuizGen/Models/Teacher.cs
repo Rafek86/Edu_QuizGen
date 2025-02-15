@@ -5,7 +5,7 @@
         public DateTime hireDate { get; set; } = DateTime.Now;
 
 
-        public IEnumerable<Student> Students { get; set; } = new List<Student>();
-        public IEnumerable<Course> courses { get; set; } = new List<Course>();
+        public IEnumerable<TeacherStudent> teacherStudents { get; set; } = new List<TeacherStudent>();
+        public IEnumerable<TeacherCourses> teacherCourses { get; set; } = new List<TeacherCourses>();
     }
 }

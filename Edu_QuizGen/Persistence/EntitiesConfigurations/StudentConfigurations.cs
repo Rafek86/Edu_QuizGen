@@ -8,8 +8,9 @@
                 .WithOne()
                 .HasForeignKey(s => s.StudentId);
 
-            builder.HasMany(s => s.teachers)
-                .WithMany(t => t.Students);
+            builder.HasMany(s => s.teacherStudents)
+                .WithOne()
+                .HasForeignKey(s => s.StudentId);
 
         }
     }

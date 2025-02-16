@@ -2,7 +2,7 @@ namespace Edu_QuizGen
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -25,17 +25,25 @@ namespace Edu_QuizGen
             builder.Services.AddDependencies(builder.Configuration);
 
             // to able frontend to access the api
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    });
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAllOrigins",
+            //        builder =>
+            //        {
+            //            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            //        });
+            //});
 
             var app = builder.Build();
-            
+
+
+            #region dataSeeding
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            await ApplicationDbContextSeedData.SeedUserAsync(userManager);
+            #endregion
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -44,11 +52,13 @@ namespace Edu_QuizGen
 
 
             // Configure the HTTP request pipeline.
-            app.UseCors("AllowAllOrigins");
+            //app.UseCors("AllowAllOrigins");
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+            
 
             app.MapControllers();
 

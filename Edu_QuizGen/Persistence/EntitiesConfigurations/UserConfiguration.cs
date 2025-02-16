@@ -14,20 +14,20 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
                 .WithOwner()
                 .HasForeignKey("UserId");
 
-        var password = new PasswordHasher<ApplicationUser>();
-        builder.HasData(new ApplicationUser
-        {
-            Id = DefaultUsers.AdminId,
-            FirstName = "QuizGen_Admin",
-            LastName = "Team",
-            UserName =DefaultUsers.AdminEmail,
-            NormalizedUserName = DefaultUsers.AdminEmail.ToUpper(),   
-            NormalizedEmail = DefaultUsers.AdminEmail.ToUpper(),
-            Email = DefaultUsers.AdminEmail,
-            SecurityStamp = DefaultUsers.SecurityStamp,
-            ConcurrencyStamp = DefaultUsers.ConcurrencyStamp,   
-            EmailConfirmed=true,
-            PasswordHash =password.HashPassword(null!,DefaultUsers.AdminPassword)
-        });
+        //var password = new PasswordHasher<ApplicationUser>();
+        //builder.HasData(new ApplicationUser
+        //{
+        //    Id = DefaultUsers.AdminId,
+        //    FirstName = "QuizGen_Admin",
+        //    LastName = "Team",
+        //    UserName =DefaultUsers.AdminEmail,
+        //    NormalizedUserName = DefaultUsers.AdminEmail.ToUpper(),   
+        //    NormalizedEmail = DefaultUsers.AdminEmail.ToUpper(),
+        //    Email = DefaultUsers.AdminEmail,
+        //    SecurityStamp = DefaultUsers.SecurityStamp,
+        //    ConcurrencyStamp = DefaultUsers.ConcurrencyStamp,   
+        //    EmailConfirmed=true,
+        //    PasswordHash =password.HashPassword(null!,DefaultUsers.AdminPassword)
+        //});
     }
 }

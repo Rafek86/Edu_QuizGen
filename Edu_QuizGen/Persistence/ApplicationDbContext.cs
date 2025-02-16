@@ -9,6 +9,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(builder);
+
     }
-    
+
+    public DbSet<Student> Students { get; set; }
+    public DbSet<Teacher> teachers { get; set; }
+    public DbSet<Course> courses { get; set; }
+
 }

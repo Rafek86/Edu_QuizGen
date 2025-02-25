@@ -129,6 +129,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         if (emailExist)
             return Result.Failure(UserErrors.DuplicatedEmail);
 
+        //TODO: Make it Student 
         var user = new ApplicationUser {
             
         Email=request.Email,

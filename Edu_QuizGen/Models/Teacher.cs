@@ -1,11 +1,10 @@
-﻿namespace Edu_QuizGen.Models
+﻿namespace Edu_QuizGen.Models;
+
+public class Teacher : ApplicationUser
 {
-    public class Teacher : ApplicationUser
-    {
-        public DateTime hireDate { get; set; } = DateTime.Now;
+    public DateTime HireDate { get; set; } = DateTime.UtcNow;
 
-
-        public IEnumerable<Student> Students { get; set; } = new List<Student>();
-        public IEnumerable<Course> courses { get; set; } = new List<Course>();
-    }
+    public ICollection<TeacherStudent> TeacherStudents { get; set; } = new List<TeacherStudent>();
+    public ICollection<TeacherCourse> TeacherCourses { get; set; } = new List<TeacherCourse>();
+    public ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

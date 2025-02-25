@@ -4,6 +4,7 @@ using Edu_QuizGen.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_QuizGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250208232031_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,19 +142,12 @@ namespace Edu_QuizGen.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("profilePicture")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -165,167 +161,25 @@ namespace Edu_QuizGen.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.UseTpcMappingStrategy();
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Course", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Credit")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Grade")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Feedback", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Feedbacks", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.QuizResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.Property<string>("StduentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StduentId");
-
-                    b.ToTable("QuizResults", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Room", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("TeacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("Rooms", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.StudentCourse", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Grade")
-                        .HasColumnType("float");
-
-                    b.HasKey("StudentId", "CourseId");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("StudentCourse", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.StudentRoom", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoomId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("StudentId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("StudentRooms", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.TeacherCourse", b =>
-                {
-                    b.Property<string>("TeacherId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TeacherId", "CourseId");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("TeacherCourse", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.TeacherStudent", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TeacherId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("StudentId", "TeacherId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("TeacherStudent", (string)null);
+                    b.HasData(
+                        new
+                        {
+                            Id = "019488ef-b9bd-7b5c-adeb-997f2443d22b",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "019488f4-5437-7bd0-88a4-491c73dde6ea",
+                            Email = "admin@GuizGen.com",
+                            EmailConfirmed = true,
+                            FirstName = "QuizGen_Admin",
+                            LastName = "Team",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GUIZGEN.COM",
+                            NormalizedUserName = "ADMIN@GUIZGEN.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC4ZEBbI3RlSh5QZ/OF4pxLETYkOPDskgfPi1RMqVzB1Zi5JkWje0lpf22I0HE43yg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "GE49A7A12DC0F4459930840D718724172",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@GuizGen.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -441,30 +295,6 @@ namespace Edu_QuizGen.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Edu_QuizGen.Models.Student", b =>
-                {
-                    b.HasBaseType("Edu_QuizGen.Models.ApplicationUser");
-
-                    b.Property<DateTime>("EntollmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GradeLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("Students", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Teacher", b =>
-                {
-                    b.HasBaseType("Edu_QuizGen.Models.ApplicationUser");
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("datetime2");
-
-                    b.ToTable("Teachers", (string)null);
-                });
-
             modelBuilder.Entity("Edu_QuizGen.Models.ApplicationUser", b =>
                 {
                     b.OwnsMany("Edu_QuizGen.Models.RefreshToken", "RefreshTokens", b1 =>
@@ -500,115 +330,6 @@ namespace Edu_QuizGen.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Feedback", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Student", "Studnet")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Studnet");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.QuizResult", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Student", "Student")
-                        .WithMany("QuizResults")
-                        .HasForeignKey("StduentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Room", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Teacher", "Teacher")
-                        .WithMany("Rooms")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.StudentCourse", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Course", "Course")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Edu_QuizGen.Models.Student", "Student")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.StudentRoom", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Room", "Room")
-                        .WithMany("StudentRooms")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Edu_QuizGen.Models.Student", "Student")
-                        .WithMany("StudentRooms")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.TeacherCourse", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Course", "Course")
-                        .WithMany("TeacherCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Edu_QuizGen.Models.Teacher", "Teacher")
-                        .WithMany("TeacherCourses")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.TeacherStudent", b =>
-                {
-                    b.HasOne("Edu_QuizGen.Models.Student", "Student")
-                        .WithMany("TeacherStudents")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Edu_QuizGen.Models.Teacher", "Teacher")
-                        .WithMany("TeacherStudents")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -660,40 +381,6 @@ namespace Edu_QuizGen.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Course", b =>
-                {
-                    b.Navigation("StudentCourses");
-
-                    b.Navigation("TeacherCourses");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Room", b =>
-                {
-                    b.Navigation("StudentRooms");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Student", b =>
-                {
-                    b.Navigation("Feedbacks");
-
-                    b.Navigation("QuizResults");
-
-                    b.Navigation("StudentCourses");
-
-                    b.Navigation("StudentRooms");
-
-                    b.Navigation("TeacherStudents");
-                });
-
-            modelBuilder.Entity("Edu_QuizGen.Models.Teacher", b =>
-                {
-                    b.Navigation("Rooms");
-
-                    b.Navigation("TeacherCourses");
-
-                    b.Navigation("TeacherStudents");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,11 +4,15 @@ using Microsoft.EntityFrameworkCore;
 namespace Edu_QuizGen.Persistence;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<ApplicationUser,ApplicationRole,string>(options)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Course> Courses { get; set; }
+    public DbSet<Quiz> Quizzes { get; set; }
+    public DbSet<Room> Rooms { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Option> Options { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,5 +30,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         }
         base.OnModelCreating(builder);
     }
-    
+
 }

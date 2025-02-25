@@ -12,4 +12,5 @@ public class Room
     public Teacher Teacher { get; set; }
 
     public ICollection<StudentRoom> StudentRooms { get; set; } = new List<StudentRoom>();
+    public ICollection<QuizRoom> QuizRoom { get; set; }=new HashSet<QuizRoom>();
 }

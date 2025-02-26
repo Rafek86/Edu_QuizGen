@@ -1,5 +1,6 @@
 ﻿using Edu_QuizGen.Contracts.Authentication;
 using Edu_QuizGen.Errors;
+using Edu_QuizGen.Service_Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,7 @@ public class AuthController(IAuthService authService,IOptions<JwtOptions> option
     }
 
 
-    [HttpPost("revoke-refress-token")]
+    [HttpPost("revoke-refresh-token")]
     public async Task<IActionResult> RevokeRefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken) {
 
         var result = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);

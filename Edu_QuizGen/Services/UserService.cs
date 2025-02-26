@@ -1,4 +1,5 @@
 ﻿using Edu_QuizGen.Contracts.Users;
+using Edu_QuizGen.Service_Abstraction;
 
 namespace Edu_QuizGen.Services;
 

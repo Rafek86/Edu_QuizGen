@@ -1,6 +1,6 @@
 ﻿using Edu_QuizGen.Contracts.Users;
 
-namespace Edu_QuizGen.Services;
+namespace Edu_QuizGen.Service_Abstraction;
 
 public interface IUserService
 {

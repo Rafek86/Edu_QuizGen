@@ -1,4 +1,4 @@
-﻿namespace Edu_QuizGen.Services;
+﻿namespace Edu_QuizGen.Service_Abstraction;
 
 public interface IAuthService
 {

@@ -1,4 +1,4 @@
-﻿namespace Edu_QuizGen.Persistence
+﻿namespace Edu_QuizGen.Models
 {
     public class Hash
     {

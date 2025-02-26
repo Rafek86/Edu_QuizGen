@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<Quiz> builder)
         {
-
+            builder.ToTable("Quiz");
         }
     }
 }

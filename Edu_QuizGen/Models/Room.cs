@@ -6,7 +6,7 @@ public class Room
 
     public string Name { get; set; } = string.Empty;
 
-    public bool Status { get; set; }  //Or Make it Enum (Drafted , Processing ,Stoped)
+    public bool Status { get; set; }
 
     public string TeacherId { get; set; }
     public Teacher Teacher { get; set; }

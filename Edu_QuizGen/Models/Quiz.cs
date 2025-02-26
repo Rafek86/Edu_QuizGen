@@ -8,5 +8,6 @@
         public bool Status { get; set; }
         public int TotalQuestions { get; set; }
         public ICollection<QuizRoom> QuizRoom { get; set; } = new HashSet<QuizRoom>();
+        public Hash Hash { get; set; }
     }
 }

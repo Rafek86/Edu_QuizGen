@@ -2,7 +2,7 @@
 
 public class Student :ApplicationUser
 {
-    public DateTime EntollmentDate { get; set; }
+    public DateTime EntollmentDate { get; set; } 
     public string GradeLevel { get; set; } = string.Empty;
 
     public ICollection<TeacherStudent> TeacherStudents { get; set; } = new List<TeacherStudent>();

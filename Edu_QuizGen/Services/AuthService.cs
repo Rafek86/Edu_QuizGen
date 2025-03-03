@@ -39,12 +39,12 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             var (token, expiresin) = _jwtProvider.GenrateToken(user,role!);
 
             var refreshToken = GenerateRefreshToken();
-            var refreshTokenExpirydays = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+            var refreshTokenExpirydays = _refreshTokenExpiryDays;
 
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshToken,
-                ExpiresOn = refreshTokenExpirydays
+                ExpiresOn = DateTime.UtcNow.AddDays(refreshTokenExpirydays)
             });
 
             await _userManager.UpdateAsync(user);
@@ -83,11 +83,11 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         var (Token, expiresin) = _jwtProvider.GenrateToken(user,role!);
 
         var newRefreshToken =GenerateRefreshToken();
-        var newRefreshTokenExpirydays = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays); 
+        var newRefreshTokenExpirydays = _refreshTokenExpiryDays;
 
         user.RefreshTokens.Add(new RefreshToken { 
         Token =newRefreshToken,
-        ExpiresOn =newRefreshTokenExpirydays  
+        ExpiresOn = DateTime.UtcNow.AddDays(newRefreshTokenExpirydays)
         });
 
         await _userManager.UpdateAsync(user); 
@@ -131,13 +131,14 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             return Result.Failure(UserErrors.DuplicatedEmail);
 
         //TODO: Make it Student 
-        var user = new ApplicationUser {
+        var user = new Student {
             
         Email=request.Email,
         UserName=request.Email,
         FirstName=request.FirstName,
         LastName=request.LastName,
-
+        EntollmentDate =DateTime.UtcNow,
+        GradeLevel=request.GradLevel
         };
 
         var result = await _userManager.CreateAsync(user,request.Password);

@@ -8,7 +8,8 @@ public class UserService(UserManager<ApplicationUser>userManager,ApplicationDbCo
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId) { 
+    public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId) 
+    { 
     
         var user =await _userManager.FindByIdAsync(userId);
 
@@ -23,7 +24,8 @@ public class UserService(UserManager<ApplicationUser>userManager,ApplicationDbCo
         return Result.Success(userProfileResponse);
     }
 
-    public async Task<Result> UpdateProfileAsync(string userId,UpdateProfileRequest request) {
+    public async Task<Result> UpdateProfileAsync(string userId,UpdateProfileRequest request)
+    {
     
         var user =await _userManager.FindByIdAsync(userId);
 
@@ -35,7 +37,8 @@ public class UserService(UserManager<ApplicationUser>userManager,ApplicationDbCo
         return Result.Success();
     }
 
-    public async Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request) {
+    public async Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request)
+    {
      
         var user = await _userManager.FindByIdAsync(userId);
 

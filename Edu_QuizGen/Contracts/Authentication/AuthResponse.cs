@@ -9,5 +9,5 @@ public record AuthResponse
     string Token,
     int ExpiresIn,
     string RefreshTokem,
-    DateTime RefreshTokenExpiration
+    int RefreshTokenExpiration
     );

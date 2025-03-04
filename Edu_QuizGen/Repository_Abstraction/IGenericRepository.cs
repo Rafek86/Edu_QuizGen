@@ -2,9 +2,13 @@
 {
     public interface IGenericRepository<T> where T : class
     {
+        Task AddAsync(T entity);
         Task<IEnumerable<T>> GetAllAsync();
         
         Task<T> GetByIdAsync(string id); //for (student, teacher, room, hash)
         Task<T> GetByIdAsync(int id); //for other classes
+
+        void Delete(T entity);
+        void Update(T entity);
     }
 }

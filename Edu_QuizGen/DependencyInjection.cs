@@ -1,7 +1,11 @@
-﻿using Edu_QuizGen.Service_Abstraction;
+﻿using Edu_QuizGen.Helpers;
+using Edu_QuizGen.Repository;
+using Edu_QuizGen.Repository_Abstraction;
+using Edu_QuizGen.Service_Abstraction;
 using Edu_QuizGen.Settings;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 
 namespace Edu_QuizGen;
 
@@ -36,8 +40,12 @@ public static class DependencyInjection
             .AddSwaggerServices()
             .AddFluentValidationConfig();
 
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+        services.AddAutoMapper(typeof(MappingProfiles));
+
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserService, UserService>(); 
 
         services.AddScoped<IEmailSender, EmailService>();
         services.AddHttpContextAccessor();  

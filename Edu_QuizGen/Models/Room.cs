@@ -6,7 +6,7 @@ public class Room
 
     public string Name { get; set; } = string.Empty;
 
-    public bool Status { get; set; }
+    public bool IsDisabled { get; set; } = false;
 
     public string TeacherId { get; set; }
     public Teacher Teacher { get; set; }

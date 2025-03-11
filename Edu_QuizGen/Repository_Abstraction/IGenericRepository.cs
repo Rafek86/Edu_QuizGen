@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Repository_Abstraction
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<T> where T : class,IBaseEntity
     {
         Task AddAsync(T entity);
         Task<IEnumerable<T>> GetAllAsync();

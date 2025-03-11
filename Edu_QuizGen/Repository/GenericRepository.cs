@@ -2,7 +2,7 @@
 
 namespace Edu_QuizGen.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class,IBaseEntity
     {
         private readonly ApplicationDbContext _dbContext;
 

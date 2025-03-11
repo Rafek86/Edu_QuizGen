@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Models;
 
-public class StudentCourse
+public class StudentCourse : IBaseEntity
 {
     public string StudentId { get; set; }
     public int CourseId { get; set; }
@@ -8,4 +8,5 @@ public class StudentCourse
 
     public Student Student { get; set; }
     public Course Course { get; set; }
+    public bool IsDisabled { get ; set ; } = false;
 }

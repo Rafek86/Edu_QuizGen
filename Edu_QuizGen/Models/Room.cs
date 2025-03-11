@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Models;
 
-public class Room
+public class Room : IBaseEntity
 {
     public string Id { get; set; } 
 

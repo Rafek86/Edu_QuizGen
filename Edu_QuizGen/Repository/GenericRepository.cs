@@ -20,7 +20,7 @@ namespace Edu_QuizGen.Repository
             _dbContext.Set<T>().Update(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbContext.Set<T>().ToListAsync();
+        public async Task<IEnumerable<T>> GetAllAsync() => await _dbContext.Set<T>().Where(s => !s.IsDisabled).ToListAsync();
         
         public async Task<T> GetByIdAsync(string id) => await _dbContext.Set<T>().FindAsync(id);
         public async Task<T> GetByIdAsync(int id) => await _dbContext.Set<T>().FindAsync(id);

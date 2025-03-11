@@ -14,6 +14,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Question> Questions { get; set; }
     public DbSet<Option> Options { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

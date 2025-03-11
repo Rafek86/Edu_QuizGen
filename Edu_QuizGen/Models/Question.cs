@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Models
 {
-    public class Question
+    public class Question : IBaseEntity
     {
         public int Id { get; set; }
         public string Text { get; set; }

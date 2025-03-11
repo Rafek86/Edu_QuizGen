@@ -6,7 +6,6 @@ namespace Edu_QuizGen.Helpers
     {
         public MappingProfiles()
         {
-            
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Models;
 
-public class Course
+public class Course : IBaseEntity
 {
     public int Id { get; set; }
 
@@ -14,5 +14,5 @@ public class Course
 
     public ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
     public ICollection<TeacherCourse> TeacherCourses { get; set; } = new List<TeacherCourse>();
-
+    public bool IsDisabled { get ; set ; } = false;
 }

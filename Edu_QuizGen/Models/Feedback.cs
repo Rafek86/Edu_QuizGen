@@ -1,6 +1,6 @@
 ﻿namespace Edu_QuizGen.Models;
 
-public class Feedback
+public class Feedback : IBaseEntity
 {
     public int Id { get; set; }
 

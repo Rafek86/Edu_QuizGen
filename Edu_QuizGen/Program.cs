@@ -26,6 +26,8 @@ namespace Edu_QuizGen
 
 
             var app = builder.Build();
+
+
             
             if (app.Environment.IsDevelopment())
             {
@@ -46,3 +48,4 @@ namespace Edu_QuizGen
         }
     }
 }
+// 

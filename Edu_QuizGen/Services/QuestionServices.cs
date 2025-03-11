@@ -4,7 +4,7 @@ using Edu_QuizGen.Service_Abstraction;
 
 namespace Edu_QuizGen.Services
 {
-    public class QuestionServices(IGenericRepository<Question> _repository) : IQuestionSevice
+    public class QuestionServices(IGenericRepository<Question> _repository, ApplicationDbContext _dbContext) : IQuestionSevice
     {
         public async Task AddQuestionAsync(Question question) => await _repository.AddAsync(question);
 
@@ -20,14 +20,19 @@ namespace Edu_QuizGen.Services
 
         public async Task<IEnumerable<Question>> GetAllQuestionsAsync() => await _repository.GetAllAsync();
 
-        public Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<Question> GetQuestionByIdAsync(int id) 
+            => _dbContext.Questions.Where(s => s.Id == id && !s.IsDisabled).FirstOrDefaultAsync();
 
-        public void UpdateQuestion(Question question)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Question>> GetQuestionsByQuizId(int QuizId)
+            => await _dbContext.Questions.Where(s => s.QuizId == QuizId && !s.IsDisabled).ToListAsync();
+
+        public async Task<IEnumerable<Question>> GetQuestionsByQuizTitle(string QuizTitle)
+            => await _dbContext.Questions.Where(s => s.Quiz.Title == QuizTitle && !s.IsDisabled).ToListAsync();
+
+        public async Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type) 
+            => await _dbContext.Questions.Where(s => s.Type == type && !s.IsDisabled).ToListAsync();
+        
+
+        public void UpdateQuestion(Question question) => _repository.Update(question);
     }
 }

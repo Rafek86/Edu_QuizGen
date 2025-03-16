@@ -45,7 +45,9 @@ public static class DependencyInjection
         services.AddAutoMapper(typeof(MappingProfiles));
 
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IUserService, UserService>(); 
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IFeedbackService, FeedbackService>();
+        services.AddScoped<IRoomService, RoomService>();
 
         services.AddScoped<IEmailSender, EmailService>();
         services.AddHttpContextAccessor();  

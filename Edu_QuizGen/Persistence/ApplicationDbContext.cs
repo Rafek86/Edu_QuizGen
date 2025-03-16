@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Option> Options { get; set; }
+    public DbSet<Feedback> Feedbacks { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)

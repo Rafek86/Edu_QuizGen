@@ -2,12 +2,12 @@
 {
     public interface IOptionService
     {
-        public Task AddOptionAsync(Option option);
+        public Task<Result> AddOptionAsync(Option option);
 
-        public Task<IEnumerable<Option>> GetOptionsByQuestionId(int QuestionId);
-        public Task<IEnumerable<Option>> GetOptionByQuestionText(string QuistionText);
+        public Task<Result<IEnumerable<Option>>> GetOptionsByQuestionId(int QuestionId);
+        public Task<Result<IEnumerable<Option>>> GetOptionByQuestionText(string QuistionText);
 
-        public void UpdateQuestion(Option option);
-        public void DeleteQuestion(Option option);
+        public Result UpdateQuestion(Option option);
+        public Result DeleteQuestion(Option option);
     }
 }

@@ -1,20 +1,39 @@
-﻿using Edu_QuizGen.Repository_Abstraction;
+﻿using Edu_QuizGen.Repository;
+using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
 namespace Edu_QuizGen.Services
 {
-    public class OptionServices(IGenericRepository<Option> _repository, ApplicationDbContext _dbContext) : IOptionService
+    public class OptionServices(IOptionRepository _repository) : IOptionService
     {
-        public async Task AddOptionAsync(Option option) => await _repository.AddAsync(option);
+        public async Task<Result> AddOptionAsync(Option option)
+        {
+            await _repository.AddAsync(option);
+            return Result.Success();
+        }
 
-        public void DeleteQuestion(Option option) => _repository.Delete(option);
+        public Result DeleteQuestion(Option option)
+        {
+            _repository.Delete(option);
+            return Result.Success();
+        }
 
-        public async Task<IEnumerable<Option>> GetOptionByQuestionText(string QuistionText)
-            => await _dbContext.Options.Where(o => o.Question.Text == QuistionText && !o.IsDisabled).ToListAsync();
+        public async Task<Result<IEnumerable<Option>>> GetOptionByQuestionText(string QuistionText)
+        {
+            var options =  await _repository.GetOptionByQuestionText(QuistionText);
+            return Result.Success(options);
+        }
 
-        public async Task<IEnumerable<Option>> GetOptionsByQuestionId(int QuestionId)
-            => await _dbContext.Options.Where(o => o.QuestionId == QuestionId && !o.IsDisabled).ToListAsync();
+        public async Task<Result<IEnumerable<Option>>> GetOptionsByQuestionId(int QuestionId)
+        {
+            var options = await _repository.GetOptionsByQuestionId(QuestionId);
+            return Result.Success(options);
+        }
 
-        public void UpdateQuestion(Option option) => _repository.Update(option);
+        public Result UpdateQuestion(Option option)
+        {
+            _repository.Update(option);
+            return Result.Success();
+        }
     }
 }

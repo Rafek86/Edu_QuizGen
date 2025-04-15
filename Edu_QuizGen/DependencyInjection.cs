@@ -50,6 +50,12 @@ public static class DependencyInjection
         services.AddScoped<IRoomService, RoomService>();
 
         services.AddScoped<IEmailSender, EmailService>();
+
+        services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<ITeacherRepository, TeacherRepository>();
+
+        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddHttpContextAccessor();  
 
         services.AddProblemDetails();

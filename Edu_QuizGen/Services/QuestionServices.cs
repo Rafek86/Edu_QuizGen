@@ -9,6 +9,7 @@ namespace Edu_QuizGen.Services
     {
         public async Task<Result> AddQuestionAsync(Question question)
         {
+            // سؤال متكرر في نفس الامتحان؟
             await _repository.AddAsync(question);
             return Result.Success();
         }
@@ -31,7 +32,8 @@ namespace Edu_QuizGen.Services
         public async Task<Result<IEnumerable<Question>>> GetAllQuestionsAsync()
         {
             var Questions = await _repository.GetAllAsync();
-            if (Questions == null)
+            //if (Questions == null)
+                // create questionlistIsEmptyError
             return Result.Success(Questions);
         }
 

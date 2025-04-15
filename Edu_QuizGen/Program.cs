@@ -38,6 +38,8 @@ namespace Edu_QuizGen
 
             // Configure the HTTP request pipeline.
 
+            app.UseCors();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

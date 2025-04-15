@@ -1,7 +1,4 @@
-﻿using Edu_QuizGen.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace Edu_QuizGen.Persistence;
+﻿namespace Edu_QuizGen.Persistence;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
@@ -14,6 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Question> Questions { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
+    public DbSet<QuizRoom> QuizRooms { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)

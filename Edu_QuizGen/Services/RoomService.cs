@@ -2,6 +2,7 @@
 using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
+using Microsoft.EntityFrameworkCore;
 
 namespace Edu_QuizGen.Services;
 
@@ -35,10 +36,12 @@ public class RoomService : IRoomService
 
     public async Task<Result<IEnumerable<Room>>> GetRoomsByTeacherAsync(string teacherId)
     {
-        var rooms = await _roomRepository.GetAllAsync();
-        var teacherRooms = rooms.Where(r => r.TeacherId == teacherId);
+        var teacher = await _teacherRepository.GetByIdAsync(teacherId);
+        if (teacher is null || teacher.IsDisabled)
+            return Result.Failure<IEnumerable<Room>>(TeacherErrors.NotFound);
 
-        return Result.Success(teacherRooms);
+        var rooms = await _roomRepository.GetRoomsByTeacherAsync(teacherId);
+        return Result.Success(rooms);
     }
 
     public async Task<Result> UpdateRoomAsync(string roomId, string teacherId, string newName)
@@ -51,7 +54,7 @@ public class RoomService : IRoomService
             return Result.Failure(RoomErrors.UnauthorizedAccess);
 
         room.Name = newName;
-        _roomRepository.Update(room);
+        await _roomRepository.Update(room);
 
         return Result.Success();
     }

@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Errors;
+﻿using Edu_QuizGen.Contracts.Feedback;
+using Edu_QuizGen.Errors;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -13,16 +14,16 @@ public class FeedbackService : IFeedbackService
         _studentRepository = studentRepository;
     }
 
-    public async Task<Result> AddFeedbackAsync(Feedback feedbackDto, string studentId)
+    public async Task<Result> AddFeedbackAsync(FeedbackAddRequest feedbackDto)
     {
-        var student = await _studentRepository.GetByIdAsync(studentId);
+        var student = await _studentRepository.GetByIdAsync(feedbackDto.StudentId);
         if (student is null || student.IsDisabled)
             return Result.Failure(StudentErrors.NotFound);
 
         var feedback = new Feedback
         {
             Comment = feedbackDto.Comment,
-            StudentId = studentId
+            StudentId = feedbackDto.StudentId,
         };
 
         await _feedbackRepository.AddAsync(feedback);
@@ -31,10 +32,8 @@ public class FeedbackService : IFeedbackService
 
     public async Task<Result<IEnumerable<Feedback>>> GetFeedbackByStudentAsync(string studentId)
     {
-        var feedbacks = await _feedbackRepository.GetAllAsync();
-        var studentFeedbacks = feedbacks.Where(f => f.StudentId == studentId);
-
-        return Result.Success(studentFeedbacks);
+        var result = await _feedbackRepository.GetFeedbackByIdAsync(studentId);
+        return Result.Success(result);
     }
 
     public async Task<Result> UpdateFeedbackAsync(int feedbackId, string studentId, string newComment)
@@ -47,7 +46,7 @@ public class FeedbackService : IFeedbackService
             return Result.Failure(FeedbackErrors.UnauthorizedAccess);
 
         feedback.Comment = newComment;
-        _feedbackRepository.Update(feedback);
+        await _feedbackRepository.Update(feedback);
 
         return Result.Success();
     }

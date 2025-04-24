@@ -2,5 +2,5 @@
 
 public interface IFeedbackRepository : IGenericRepository<Feedback>
 {
-    public Task<Feedback> GetFeedbackByIdAsync(int id);
+    Task<IEnumerable<Feedback>> GetFeedbackByIdAsync(string id);
 }

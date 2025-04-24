@@ -9,6 +9,6 @@
         Task<T> GetByIdAsync(int id); //for other classes
 
         void Delete(T entity);
-        void Update(T entity);
+        Task Update(T entity);
     }
 }

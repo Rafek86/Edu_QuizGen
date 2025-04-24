@@ -24,8 +24,6 @@
 
   <ItemGroup>
     <Folder Include="Configurations\" />
-    <Folder Include="Contracts\Feedback\" />
-    <Folder Include="Contracts\Rooms\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

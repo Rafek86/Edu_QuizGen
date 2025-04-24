@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Repository_Abstraction;
+﻿using Edu_QuizGen.Models;
+using Edu_QuizGen.Repository_Abstraction;
 
 namespace Edu_QuizGen.Repository;
 
@@ -11,10 +12,11 @@ public class FeedbackRepository : GenericRepository<Feedback>, IFeedbackReposito
         _dbContext = dbContext;
     }
 
-    public async Task<Feedback?> GetFeedbackByIdAsync(int id)
+    public async Task<IEnumerable<Feedback>> GetFeedbackByIdAsync(string id)
     {
         return await _dbContext.Feedbacks
             .Include(f => f.Studnet)
-            .FirstOrDefaultAsync(f => f.Id == id && !f.IsDisabled);
+           .Where(f => f.StudentId == id && !f.IsDisabled)
+           .ToListAsync();
     }
 }

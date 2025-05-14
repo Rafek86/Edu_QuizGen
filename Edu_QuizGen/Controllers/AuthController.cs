@@ -80,7 +80,6 @@ public class AuthController(IAuthService authService,IOptions<JwtOptions> option
     }
 
 
-
     [HttpPost("forget-password")]
     public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)
     {

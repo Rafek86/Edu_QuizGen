@@ -1,8 +1,6 @@
 ﻿using Edu_QuizGen.Errors;
-using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
-using Microsoft.EntityFrameworkCore;
 
 namespace Edu_QuizGen.Services;
 

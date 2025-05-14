@@ -4,7 +4,6 @@ using Edu_QuizGen.Helpers;
 using Edu_QuizGen.Service_Abstraction;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Edu_QuizGen.Services;
 

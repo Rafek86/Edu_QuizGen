@@ -15,7 +15,7 @@ public class FeedbackRepository : GenericRepository<Feedback>, IFeedbackReposito
     public async Task<IEnumerable<Feedback>> GetFeedbackByIdAsync(string id)
     {
         return await _dbContext.Feedbacks
-            .Include(f => f.Studnet)
+         //  .Include(f => f.Studnet)
            .Where(f => f.StudentId == id && !f.IsDisabled)
            .ToListAsync();
     }

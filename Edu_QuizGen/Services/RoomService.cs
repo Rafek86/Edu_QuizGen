@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Errors;
+﻿using Edu_QuizGen.Contracts.Rooms;
+using Edu_QuizGen.Errors;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -32,14 +33,16 @@ public class RoomService : IRoomService
         return Result.Success();
     }
 
-    public async Task<Result<IEnumerable<Room>>> GetRoomsByTeacherAsync(string teacherId)
+    public async Task<Result<IEnumerable<GerRoomResponse>>> GetRoomsByTeacherAsync(string teacherId)
     {
         var teacher = await _teacherRepository.GetByIdAsync(teacherId);
         if (teacher is null || teacher.IsDisabled)
-            return Result.Failure<IEnumerable<Room>>(TeacherErrors.NotFound);
+            return Result.Failure<IEnumerable<GerRoomResponse>>(TeacherErrors.NotFound);
 
         var rooms = await _roomRepository.GetRoomsByTeacherAsync(teacherId);
-        return Result.Success(rooms);
+
+
+        return Result.Success(rooms.Select(r => new GerRoomResponse (r.Id,r.Name,r.TeacherId)));
     }
 
     public async Task<Result> UpdateRoomAsync(string roomId, string teacherId, string newName)

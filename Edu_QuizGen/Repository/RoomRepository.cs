@@ -35,9 +35,9 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
     {
         return await _dbContext.Rooms
             .Where(r => r.TeacherId == teacherId && !r.IsDisabled)
-            .Include(r => r.Teacher)
-            .Include(r => r.StudentRooms)
-            .Include(r => r.QuizRoom)
+            //.Include(r => r.Teacher)
+          //  .Include(r => r.StudentRooms)
+     //       .Include(r => r.QuizRoom)
             .ToListAsync();
     }
 }

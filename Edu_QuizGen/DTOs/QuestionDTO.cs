@@ -7,7 +7,9 @@ namespace Edu_QuizGen.DTOs
         [Required(ErrorMessage = "Question text is required")]
         public string Text { get; set; }
         public QuestionType Type { get; set; }
+        [Required(ErrorMessage ="bta3a")]
         public string CorrectAnswer { get; set; }
+        public int QuizId { get; set; }
         public ICollection<OptionDTO>? Options { get; set; } = new List<OptionDTO>();
     }
 }

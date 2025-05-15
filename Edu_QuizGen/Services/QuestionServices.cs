@@ -61,6 +61,7 @@ namespace Edu_QuizGen.Services
                     Text = questionDto.Text,
                     Type = questionDto.Type,
                     CorrectAnswer = questionDto.CorrectAnswer,
+                    QuizId = questionDto.QuizId,
                     Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
                 };
                 await _repository.AddAsync(question);

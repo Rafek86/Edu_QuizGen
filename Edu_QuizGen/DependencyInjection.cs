@@ -2,6 +2,7 @@
 using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
+using Edu_QuizGen.Services;
 using Edu_QuizGen.Settings;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IQuestionSevice, QuestionServices>();
 
         services.AddScoped<IEmailSender, EmailService>();
 
@@ -56,6 +58,7 @@ public static class DependencyInjection
 
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddHttpContextAccessor();  
 
         services.AddProblemDetails();

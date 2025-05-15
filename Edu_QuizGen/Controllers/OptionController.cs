@@ -1,7 +1,6 @@
 ﻿using Edu_QuizGen.DTOs;
 using Edu_QuizGen.Errors;
 using Edu_QuizGen.Service_Abstraction;
-using Edu_QuizGen.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -11,4 +11,15 @@ public class HashRepository : GenericRepository<Hash>, IHashRepository
         _dbContext = dbContext;
     }
 
+    public async Task<Hash> GetByHashAsync(string fileHash)
+    {
+        return await _dbContext.Hashes
+            .FirstOrDefaultAsync(d => d.FileHash == fileHash);
+    }
+
+    public async Task<bool> ExistsByHashAsync(string fileHash)
+    {
+        return await _dbContext.Hashes
+            .AnyAsync(d => d.FileHash == fileHash);
+    }
 }

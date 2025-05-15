@@ -2,4 +2,6 @@
 
 public interface IHashRepository : IGenericRepository<Hash>
 {
+    Task<Hash> GetByHashAsync(string fileHash);
+    Task<bool> ExistsByHashAsync(string fileHash);
 }

@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IQuestionSevice, QuestionServices>();
+        services.AddScoped<IOptionService, OptionServices>();
 
         services.AddScoped<IEmailSender, EmailService>();
 
@@ -59,6 +60,8 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IOptionRepository, OptionRepository>();
+
         services.AddHttpContextAccessor();  
 
         services.AddProblemDetails();

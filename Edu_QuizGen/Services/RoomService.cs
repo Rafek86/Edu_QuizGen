@@ -69,7 +69,7 @@ public class RoomService : IRoomService
         if (room.TeacherId != teacherId)
             return Result.Failure(RoomErrors.UnauthorizedAccess);
 
-        _roomRepository.Delete(room);
+        await _roomRepository.Delete(room);
         return Result.Success();
     }
 }

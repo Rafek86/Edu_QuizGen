@@ -17,12 +17,12 @@ namespace Edu_QuizGen.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             var prop = entity.GetType().GetProperty("IsDisabled");
             prop?.SetValue(entity, true);
             _dbContext.Set<T>().Update(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbContext.Set<T>().Where(s => !s.IsDisabled).ToListAsync();
@@ -30,6 +30,15 @@ namespace Edu_QuizGen.Repository
         public async Task<T> GetByIdAsync(string id) => await _dbContext.Set<T>().FindAsync(id);
         public async Task<T> GetByIdAsync(int id) => await _dbContext.Set<T>().FindAsync(id);
 
-        public async Task Update(T entity) { _dbContext.Set<T>().Update(entity); await _dbContext.SaveChangesAsync(); }
+        public async Task Update(T entity)
+        {
+            _dbContext.Set<T>().Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
+        }
     }
 }

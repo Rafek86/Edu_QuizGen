@@ -8,7 +8,8 @@
         Task<T> GetByIdAsync(string id); //for (student, teacher, room, hash)
         Task<T> GetByIdAsync(int id); //for other classes
 
-        void Delete(T entity);
+        Task Delete(T entity);
         Task Update(T entity);
+        Task<int> SaveChangesAsync();
     }
 }

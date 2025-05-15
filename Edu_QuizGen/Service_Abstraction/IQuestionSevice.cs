@@ -1,17 +1,19 @@
-﻿namespace Edu_QuizGen.Service_Abstraction
+﻿using Edu_QuizGen.DTOs;
+
+namespace Edu_QuizGen.Service_Abstraction
 {
     public interface IQuestionSevice
     {
-        public Task<Result> AddQuestionAsync(Question question);
-        public Task<Result> AddQuestionAsync(IEnumerable<Question> questions);
+        public Task<Result> AddQuestionAsync(QuestionDTO question);
+        public Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questions);
 
-        public Task<Result<Question>> GetQuestionByIdAsync(int id);
-        public Task<Result<IEnumerable<Question>>> GetAllQuestionsAsync();
-        public Task<Result<IEnumerable<Question>>> GetQuestionsByTypeAsync(QuestionType type);
-        public Task<Result<IEnumerable<Question>>> GetQuestionsByQuizId(int QuizId);
-        public Task<Result<IEnumerable<Question>>> GetQuestionsByQuizTitle(string QuizTitle);
+        public Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id);
+        public Task<Result<IEnumerable<QuestionDTO>>> GetAllQuestionsAsync();
+        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByTypeAsync(QuestionType type);
+        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId);
+        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle);
 
-        public Result UpdateQuestion(Question question);
-        public Result DeleteQuestion(Question question);
+        public Task<Result> UpdateQuestion(int id, QuestionDTO questionDto);
+        public Task<Result> DeleteQuestion(int id);
     }
 }

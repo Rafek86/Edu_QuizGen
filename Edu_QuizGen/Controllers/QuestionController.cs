@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Errors;
+﻿using Edu_QuizGen.DTOs;
+using Edu_QuizGen.Errors;
 using Edu_QuizGen.Service_Abstraction;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,27 +12,27 @@ namespace Edu_QuizGen.Controllers
     public class QuestionController(IQuestionSevice service) : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<Question>> Add([FromBody] Question question)
+        public async Task<ActionResult> Add([FromBody] QuestionDTO questionDto)
         {
-            var result = await service.AddQuestionAsync(question);
+            var result = await service.AddQuestionAsync(questionDto);
             if (result.IsFailure)
                 return result.ToProblem();
 
-            return Ok("question is add successfully.");
+            return Ok("Question added successfully.");
         }
 
         [HttpPost("AddAll")]
-        public async Task<ActionResult<IEnumerable<Question>>> AddAll([FromBody] IEnumerable<Question> questions)
+        public async Task<ActionResult> AddAll([FromBody] IEnumerable<QuestionDTO> questionsDto)
         {
-            var result = await service.AddQuestionAsync(questions);
+            var result = await service.AddQuestionAsync(questionsDto);
             if (result.IsFailure)
                 return result.ToProblem();
 
-            return Ok("All questions is add successfully.");
+            return Ok("All questions added successfully.");
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> Get()
+        public async Task<ActionResult<IEnumerable<QuestionDTO>>> Get()
         {
             var result = await service.GetAllQuestionsAsync();
             if (result.IsFailure)
@@ -41,7 +42,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("{questionId}")]
-        public async Task<ActionResult<Question>> GetById(int questionId)
+        public async Task<ActionResult<QuestionDTO>> GetById(int questionId)
         {
             var result = await service.GetQuestionByIdAsync(questionId);
 
@@ -51,7 +52,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("quiz/{QuizId}")]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByQuizId(int QuizId)
+        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId)
         {
             var result = await service.GetQuestionsByQuizId(QuizId);
 
@@ -61,8 +62,8 @@ namespace Edu_QuizGen.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("quizTitle/{QuizTitle}")] // if there is more than one quiz with the same title
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByQuizTitle(string QuizTitle)
+        [HttpGet("quiz/title/{QuizTitle}")] // if there is more than one quiz with the same title
+        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
         {
             var result = await service.GetQuestionsByQuizTitle(QuizTitle);
 
@@ -73,7 +74,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("Type/{type}")]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByTypeAsync(QuestionType type)
+        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByType(QuestionType type)
         {
             var result = await service.GetQuestionsByTypeAsync(type);
 
@@ -83,6 +84,25 @@ namespace Edu_QuizGen.Controllers
             return Ok(result.Value);
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] QuestionDTO questionDto)
+        {
+            var result = await service.UpdateQuestion(id, questionDto);
+            if (result.IsFailure)
+                return result.ToProblem();
+
+            return Ok("Question updated successfully.");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var result = await service.DeleteQuestion(id);
+            if (result.IsFailure)
+                return result.ToProblem();
+
+            return Ok("Question deleted successfully.");
+        }
 
     }
 }

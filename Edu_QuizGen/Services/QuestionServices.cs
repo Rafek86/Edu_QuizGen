@@ -1,4 +1,6 @@
-﻿using Edu_QuizGen.Errors;
+﻿using Edu_QuizGen.DTOs;
+using Edu_QuizGen.Errors;
+using Edu_QuizGen.Models;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -6,65 +8,189 @@ namespace Edu_QuizGen.Services
 {
     public class QuestionServices(IQuestionRepository _repository) : IQuestionSevice
     {
-        public async Task<Result> AddQuestionAsync(Question question)
+        public async Task<Result> AddQuestionAsync(QuestionDTO questionDto)
         {
-            // سؤال متكرر في نفس الامتحان؟
+            // Validate question type and correct answer
+            if (questionDto.Type == QuestionType.MCQ)
+            {
+                if (questionDto.Options == null || !questionDto.Options.Any())
+                    return Result.Failure(QuestionErrors.MCQOptionsRequired);
+
+                if (!questionDto.Options.Any(o => o.Text == questionDto.CorrectAnswer))
+                    return Result.Failure(QuestionErrors.CorrectAnswerNotInOptions);
+            }
+            else if (questionDto.Type == QuestionType.TF)
+            {
+                if (questionDto.CorrectAnswer.ToLower() != "true" && questionDto.CorrectAnswer.ToLower() != "false")
+                    return Result.Failure(QuestionErrors.InvalidTrueFalseAnswer);
+            }
+
+            var question = new Question
+            {
+                Text = questionDto.Text,
+                Type = questionDto.Type,
+                CorrectAnswer = questionDto.CorrectAnswer,
+                Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
+            };
 
             await _repository.AddAsync(question);
             return Result.Success();
         }
 
-        public async Task<Result> AddQuestionAsync(IEnumerable<Question> questions)
+        public async Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questionsDto)
         {
-            foreach (var question in questions)
+            foreach (var questionDto in questionsDto)
             {
+                // Validate question type and correct answer
+                if (questionDto.Type == QuestionType.MCQ)
+                {
+                    if (questionDto.Options == null || !questionDto.Options.Any())
+                        return Result.Failure(QuestionErrors.MCQOptionsRequired);
+
+                    if (!questionDto.Options.Any(o => o.Text == questionDto.CorrectAnswer))
+                        return Result.Failure(QuestionErrors.CorrectAnswerNotInOptions);
+                }
+                else if (questionDto.Type == QuestionType.TF)
+                {
+                    if (questionDto.CorrectAnswer.ToLower() != "true" && questionDto.CorrectAnswer.ToLower() != "false")
+                        return Result.Failure(QuestionErrors.InvalidTrueFalseAnswer);
+                }
+
+                var question = new Question
+                {
+                    Text = questionDto.Text,
+                    Type = questionDto.Type,
+                    CorrectAnswer = questionDto.CorrectAnswer,
+                    Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
+                };
                 await _repository.AddAsync(question);
             }
             return Result.Success();
         }
 
-        public Result DeleteQuestion(Question question)
+        public async Task<Result> DeleteQuestion(int id)
         {
-            _repository.Delete(question);
+            var question = await _repository.GetQuestionByIdAsync(id);
+            if (question == null)
+                return Result.Failure(QuestionErrors.questionIsEmptyError);
+
+            await _repository.Delete(question);
             return Result.Success();
         }
 
-        public async Task<Result<IEnumerable<Question>>> GetAllQuestionsAsync()
+        public async Task<Result<IEnumerable<QuestionDTO>>> GetAllQuestionsAsync()
         {
-            var Questions = await _repository.GetAllAsync();
-            if (Questions == null)
-                return Result.Failure<IEnumerable<Question>>(QuestionErrors.questionlistIsEmptyError);
-            return Result.Success(Questions);
+            var questions = await _repository.GetAllAsync();
+            if (questions == null)
+                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+
+            var questionsDto = questions.Select(q => new QuestionDTO
+            {
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+
+            });
+
+            return Result.Success(questionsDto);
         }
 
-        public async Task<Result<Question>> GetQuestionByIdAsync(int id)
+        public async Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id)
         {
             var question = await _repository.GetQuestionByIdAsync(id);
-            return Result.Success(question);
+            if (question == null)
+                return Result.Failure<QuestionDTO>(QuestionErrors.questionIsEmptyError);
+
+            var questionDto = new QuestionDTO
+            {
+                Text = question.Text,
+                Type = question.Type,
+                CorrectAnswer = question.CorrectAnswer,
+                Options = question.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+            };
+
+            return Result.Success(questionDto);
         }
 
-        public async Task<Result<IEnumerable<Question>>> GetQuestionsByQuizId(int QuizId)
+        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId)
         {
-            var question = await _repository.GetQuestionsByQuizId(QuizId);
-            return Result.Success(question);
-        }
-            
-        public async Task<Result<IEnumerable<Question>>> GetQuestionsByQuizTitle(string QuizTitle)
-        {
-            var question = await _repository.GetQuestionsByQuizTitle(QuizTitle);
-            return Result.Success(question);
-        }
-            
+            var questions = await _repository.GetQuestionsByQuizId(QuizId);
+            if (questions == null)
+                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
 
-        public async Task<Result<IEnumerable<Question>>> GetQuestionsByTypeAsync(QuestionType type)
-        {
-            var question = await _repository.GetQuestionsByTypeAsync(type);
-            return Result.Success(question);
+            var questionsDto = questions.Select(q => new QuestionDTO
+            {
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+            });
+
+            return Result.Success(questionsDto);
         }
 
-        public Result UpdateQuestion(Question question)
+        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
         {
-            _repository.Update(question);
+            var questions = await _repository.GetQuestionsByQuizTitle(QuizTitle);
+            if (questions == null)
+                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+
+            var questionsDto = questions.Select(q => new QuestionDTO
+            {
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+            });
+
+            return Result.Success(questionsDto);
+        }
+
+        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByTypeAsync(QuestionType type)
+        {
+            var questions = await _repository.GetQuestionsByTypeAsync(type);
+            if (questions == null)
+                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+
+            var questionsDto = questions.Select(q => new QuestionDTO
+            {
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+            });
+
+            return Result.Success(questionsDto);
+        }
+
+        public async Task<Result> UpdateQuestion(int id, QuestionDTO questionDto)
+        {
+            var question = await _repository.GetQuestionByIdAsync(id);
+            if (question == null)
+                return Result.Failure(QuestionErrors.questionIsEmptyError);
+
+            // Validate question type and correct answer
+            if (questionDto.Type == QuestionType.MCQ)
+            {
+                if (questionDto.Options == null || !questionDto.Options.Any())
+                    return Result.Failure(QuestionErrors.MCQOptionsRequired);
+
+                if (!questionDto.Options.Any(o => o.Text == questionDto.CorrectAnswer))
+                    return Result.Failure(QuestionErrors.CorrectAnswerNotInOptions);
+            }
+            else if (questionDto.Type == QuestionType.TF)
+            {
+                if (questionDto.CorrectAnswer.ToLower() != "true" && questionDto.CorrectAnswer.ToLower() != "false")
+                    return Result.Failure(QuestionErrors.InvalidTrueFalseAnswer);
+            }
+
+            question.Text = questionDto.Text;
+            question.Type = questionDto.Type;
+            question.CorrectAnswer = questionDto.CorrectAnswer;
+            question.Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList();
+
+            await _repository.Update(question);
             return Result.Success(question);
         }
     }

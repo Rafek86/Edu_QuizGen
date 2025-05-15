@@ -8,6 +8,6 @@ namespace Edu_QuizGen.DTOs
         public string Text { get; set; }
         public QuestionType Type { get; set; }
         public string CorrectAnswer { get; set; }
-        public ICollection<Option>? Options { get; set; } = new List<Option>();
+        public ICollection<OptionDTO>? Options { get; set; } = new List<OptionDTO>();
     }
 }

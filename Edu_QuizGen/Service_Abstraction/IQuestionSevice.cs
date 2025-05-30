@@ -7,11 +7,11 @@ namespace Edu_QuizGen.Service_Abstraction
         public Task<Result> AddQuestionAsync(QuestionDTO question);
         public Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questions);
 
-        public Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id);
-        public Task<Result<IEnumerable<QuestionDTO>>> GetAllQuestionsAsync();
-        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByTypeAsync(QuestionType type);
-        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId);
-        public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle);
+        public Task<Result<QuestionResponseDTO>> GetQuestionByIdAsync(int id);
+        public Task<Result<IEnumerable<QuestionResponseDTO>>> GetAllQuestionsAsync();
+        public Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByTypeAsync(QuestionType type);
+        public Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizId(int QuizId);
+        public Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizTitle(string QuizTitle);
 
         public Task<Result> UpdateQuestion(int id, QuestionDTO questionDto);
         public Task<Result> DeleteQuestion(int id);

@@ -32,7 +32,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuestionDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<QuestionResponseDTO>>> Get()
         {
             var result = await service.GetAllQuestionsAsync();
             if (result.IsFailure)
@@ -42,7 +42,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("{questionId}")]
-        public async Task<ActionResult<QuestionDTO>> GetById(int questionId)
+        public async Task<ActionResult<QuestionResponseDTO>> GetById(int questionId)
         {
             var result = await service.GetQuestionByIdAsync(questionId);
 
@@ -52,7 +52,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("quiz/{QuizId}")]
-        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId)
+        public async Task<ActionResult<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizId(int QuizId)
         {
             var result = await service.GetQuestionsByQuizId(QuizId);
 
@@ -63,7 +63,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("quiz/title/{QuizTitle}")] // if there is more than one quiz with the same title
-        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
+        public async Task<ActionResult<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
         {
             var result = await service.GetQuestionsByQuizTitle(QuizTitle);
 
@@ -74,7 +74,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpGet("Type/{type}")]
-        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByType(QuestionType type)
+        public async Task<ActionResult<IEnumerable<QuestionResponseDTO>>> GetQuestionsByType(QuestionType type)
         {
             var result = await service.GetQuestionsByTypeAsync(type);
 

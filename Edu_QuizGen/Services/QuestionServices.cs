@@ -80,14 +80,15 @@ namespace Edu_QuizGen.Services
             return Result.Success();
         }
 
-        public async Task<Result<IEnumerable<QuestionDTO>>> GetAllQuestionsAsync()
+        public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetAllQuestionsAsync()
         {
             var questions = await _repository.GetAllAsync();
             if (questions == null)
-                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+                return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.questionlistIsEmptyError);
 
-            var questionsDto = questions.Select(q => new QuestionDTO
+            var questionsDto = questions.Select(q => new QuestionResponseDTO
             {
+                Id = q.Id,
                 Text = q.Text,
                 Type = q.Type,
                 CorrectAnswer = q.CorrectAnswer,
@@ -98,14 +99,15 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
-        public async Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id)
+        public async Task<Result<QuestionResponseDTO>> GetQuestionByIdAsync(int id)
         {
             var question = await _repository.GetQuestionByIdAsync(id);
             if (question == null)
-                return Result.Failure<QuestionDTO>(QuestionErrors.questionIsEmptyError);
+                return Result.Failure<QuestionResponseDTO>(QuestionErrors.questionIsEmptyError);
 
-            var questionDto = new QuestionDTO
+            var questionDto = new QuestionResponseDTO
             {
+                Id = question.Id,
                 Text = question.Text,
                 Type = question.Type,
                 CorrectAnswer = question.CorrectAnswer,
@@ -115,14 +117,15 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionDto);
         }
 
-        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId)
+        public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizId(int QuizId)
         {
             var questions = await _repository.GetQuestionsByQuizId(QuizId);
             if (questions == null)
-                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+                return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.questionlistIsEmptyError);
 
-            var questionsDto = questions.Select(q => new QuestionDTO
+            var questionsDto = questions.Select(q => new QuestionResponseDTO
             {
+                Id = q.Id,
                 Text = q.Text,
                 Type = q.Type,
                 CorrectAnswer = q.CorrectAnswer,
@@ -132,14 +135,15 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
-        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
+        public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByQuizTitle(string QuizTitle)
         {
             var questions = await _repository.GetQuestionsByQuizTitle(QuizTitle);
             if (questions == null)
-                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+                return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.questionlistIsEmptyError);
 
-            var questionsDto = questions.Select(q => new QuestionDTO
+            var questionsDto = questions.Select(q => new QuestionResponseDTO
             {
+                Id = q.Id,
                 Text = q.Text,
                 Type = q.Type,
                 CorrectAnswer = q.CorrectAnswer,
@@ -149,14 +153,15 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
-        public async Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByTypeAsync(QuestionType type)
+        public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetQuestionsByTypeAsync(QuestionType type)
         {
             var questions = await _repository.GetQuestionsByTypeAsync(type);
             if (questions == null)
-                return Result.Failure<IEnumerable<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+                return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.questionlistIsEmptyError);
 
-            var questionsDto = questions.Select(q => new QuestionDTO
+            var questionsDto = questions.Select(q => new QuestionResponseDTO
             {
+                Id = q.Id,
                 Text = q.Text,
                 Type = q.Type,
                 CorrectAnswer = q.CorrectAnswer,
@@ -191,9 +196,13 @@ namespace Edu_QuizGen.Services
             question.Text = questionDto.Text;
             question.Type = questionDto.Type;
             question.CorrectAnswer = questionDto.CorrectAnswer;
-            question.QuizId=questionDto.QuizId;
-            question.Options = questionDto.Options?.Select(o => new Option { Text = o.Text , QuestionId =question.Id }).ToList();
-            await _repository.Update(question);
+            question.Options = questionDto.Options?.Select(o => new Option
+            {
+                Text = o.Text,
+                QuestionId = question.Id
+            }).ToList();
+
+            await _repository.UpdateQuestion(question);
             return Result.Success(question);
         }
     }

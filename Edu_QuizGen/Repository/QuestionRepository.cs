@@ -36,5 +36,24 @@ namespace Edu_QuizGen.Repository
 
         public async Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Type == type && !s.IsDisabled).ToListAsync();
+        public async Task UpdateQuestion(Question question)
+        {
+            var Options = await _dbContext.Options
+                .Where(o => o.QuestionId == question.Id)
+                .ToListAsync();
+            _dbContext.Options.RemoveRange(Options);
+
+            _dbContext.Entry(question).State = EntityState.Modified;
+
+            if (question.Options != null)
+            {
+                foreach (var option in question.Options)
+                {
+                    option.QuestionId = question.Id;
+                    _dbContext.Options.Add(option);
+                }
+            }
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace Edu_QuizGen.Services
                 Text = questionDto.Text,
                 Type = questionDto.Type,
                 CorrectAnswer = questionDto.CorrectAnswer,
+                QuizId = questionDto.QuizId,
                 Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
             };
 
@@ -165,6 +166,7 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
+        //?! it doesn't work FIXXXXXXXXXX it
         public async Task<Result> UpdateQuestion(int id, QuestionDTO questionDto)
         {
             var question = await _repository.GetQuestionByIdAsync(id);
@@ -189,8 +191,8 @@ namespace Edu_QuizGen.Services
             question.Text = questionDto.Text;
             question.Type = questionDto.Type;
             question.CorrectAnswer = questionDto.CorrectAnswer;
-            question.Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList();
-
+            question.QuizId=questionDto.QuizId;
+            question.Options = questionDto.Options?.Select(o => new Option { Text = o.Text , QuestionId =question.Id }).ToList();
             await _repository.Update(question);
             return Result.Success(question);
         }

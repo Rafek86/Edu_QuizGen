@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Edu_QuizGen.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OptionController(IOptionService _optionService) : ControllerBase

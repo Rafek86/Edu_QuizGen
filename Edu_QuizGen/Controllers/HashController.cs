@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Repository_Abstraction;
+﻿using Edu_QuizGen.DTOs;
+using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,104 +9,116 @@ namespace Edu_QuizGen.Controllers
     [ApiController]
     public class HashController : ControllerBase
     {
-    private readonly IHashService _hashService;
-    private readonly IHashRepository _repository;
+        private readonly IHashService _hashService;
+        private readonly IHashRepository _repository;
 
-    public HashController(IHashService hashService, IHashRepository repository)
-    {
-        _hashService = hashService;
-        _repository = repository;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Hash>>> GetAllDocuments()
-    {
-        var documents = await _repository.GetAllAsync();
-        return Ok(documents);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Hash>> GetDocument(Guid id)
-    {
-        var document = await _repository.GetByIdAsync(id.ToString());
-        if (document == null)
+        public HashController(IHashService hashService, IHashRepository repository)
         {
-            return NotFound();
-        }
-        return Ok(document);
-    }
-
-    [HttpPost("upload")]
-    public async Task<ActionResult<Hash>> UploadPdf(IFormFile file,int quizId)
-    {
-        if (file == null || file.Length == 0)
-        {
-            return BadRequest("No file uploaded or file is empty");
+            _hashService = hashService;
+            _repository = repository;
         }
 
-        if (!file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+        [HttpGet]
+        public async Task<IActionResult> GetAllDocuments()
         {
-            return BadRequest("Only PDF files are accepted");
-        }
-
-        try
-        {
-            var (isDuplicate, existingDocument) = await _hashService.IsDuplicatePdfAsync(file);
-
-            if (isDuplicate)
+            try
             {
-                return Conflict(new
+                var documents = await _repository.GetAllHashResponsesAsync();
+                return Ok(documents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Error retrieving documents: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDocument(Guid id)
+        {
+            try
+            {
+                var document = await _repository.GetHashResponseByIdAsync(id.ToString());
+
+                if (document == null)
                 {
-                    message = "This PDF has already been uploaded",
-                    document = existingDocument
+                    return NotFound($"Document with ID {id} not found");
+                }
+
+                return Ok(document);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Error retrieving document: {ex.Message}");
+            }
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadPdf( IFormFile file, [FromForm] int quizId)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded or file is empty");
+            }
+
+            if (!file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Only PDF files are accepted");
+            }
+
+            // First check if it's a duplicate
+            var duplicateCheckResult = await _hashService.IsDuplicatePdfAsync(file);
+            if (duplicateCheckResult.IsFailure)
+            {
+                return duplicateCheckResult.ToProblem();
+            }
+
+            if (duplicateCheckResult.Value.Exists)
+            {
+                return Conflict(new HashDuplicateResponse
+                {
+                    Message = "This PDF has already been uploaded",
+                    Document = duplicateCheckResult.Value.Document
                 });
             }
 
-            // Save the PDF (both metadata to DB and file to storage)
-            var document = await _hashService.SavePdfAsync(file,quizId);
-
-            return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, document);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
-    }
-
-    [HttpPost("check")]
-    public async Task<ActionResult> CheckPdfExists(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-        {
-            return BadRequest("No file uploaded or file is empty");
-        }
-
-        if (!file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
-        {
-            return BadRequest("Only PDF files are accepted");
-        }
-
-        try
-        {
-            var (isDuplicate, existingDocument) = await _hashService.IsDuplicatePdfAsync(file);
-
-            if (isDuplicate)
+            // Save the PDF
+            var saveResult = await _hashService.SavePdfAsync(file, quizId);
+            if (saveResult.IsFailure)
             {
-                return Ok(new
-                {
-                    exists = true,
-                    message = "This PDF has already been uploaded",
-                    document = existingDocument
-                });
+                return saveResult.ToProblem();
             }
 
-            return Ok(new { exists = false, message = "This PDF has not been uploaded before" });
+            return CreatedAtAction(nameof(GetDocument),
+                new { id = saveResult.Value.Id },
+                new HashUploadResponse
+                {
+                    Message = "PDF uploaded successfully",
+                    Document = saveResult.Value
+                });
         }
-        catch (Exception ex)
+
+        [HttpPost("check")]
+        public async Task<IActionResult> CheckPdfExists( IFormFile file)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded or file is empty");
+            }
+
+            if (!file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Only PDF files are accepted");
+            }
+
+            var result = await _hashService.IsDuplicatePdfAsync(file);
+            if (result.IsFailure)
+            {
+                return result.ToProblem();
+            }
+
+            return Ok(result.Value);
         }
     }
-
-}
 }

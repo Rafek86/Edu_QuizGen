@@ -636,6 +636,28 @@ namespace Edu_QuizGen.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Students", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "11caefd4-1787-43cb-92b1-ec7a68d628c9",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "90293fcc-0add-4861-a533-27268bbe6120",
+                            Email = "JohnDoee@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "John",
+                            IsDisabled = false,
+                            LastName = "Doee",
+                            LockoutEnabled = false,
+                            PasswordHash = "AQAAAAIAAYagAAAAEH3xCdYP1imtJFYj9GYcPcgU9UNZ5R2n67vGGDefUSym5KbLVWtS7z1zp6hv0bKSfw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "7f917065-3107-417e-b21b-2bf3b28ee69e",
+                            TwoFactorEnabled = false,
+                            UserName = "JohnDoee@gmail.com",
+                            profilePicture = "...",
+                            EntollmentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            GradeLevel = ""
+                        });
                 });
 
             modelBuilder.Entity("Edu_QuizGen.Models.Teacher", b =>
@@ -659,13 +681,13 @@ namespace Edu_QuizGen.Migrations
                             IsDisabled = false,
                             LastName = "Doe",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEEHdRqyhHacyit8HhxVE/EUNJK6wKJX9KtaHDK/N7g27ywJn5A9f0g3dEShkRZgxkg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP0uBLq7ttC2B93RkaWea0LWUZIhFGuf6Zd5uZ3g3+A8+0t0Ih3V2qxm1YB6dgtDkw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bb6d9e07-987f-431c-97b1-51f9eafc3da9",
+                            SecurityStamp = "12581293-7304-4456-a395-04c004b0fe83",
                             TwoFactorEnabled = false,
                             UserName = "JohnDoe@gmail.com",
                             profilePicture = "...",
-                            HireDate = new DateTime(2025, 6, 2, 21, 13, 27, 473, DateTimeKind.Utc).AddTicks(6422)
+                            HireDate = new DateTime(2025, 5, 15, 16, 26, 48, 719, DateTimeKind.Utc).AddTicks(2648)
                         });
                 });
 

@@ -13,7 +13,8 @@ namespace Edu_QuizGen.Persistence.EntitiesConfigurations
 
             builder.HasMany(x => x.Options)
                 .WithOne(x => x.Question)
-                .HasForeignKey(x=> x.QuestionId);
+                .HasForeignKey(x=> x.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

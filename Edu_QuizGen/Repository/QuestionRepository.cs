@@ -46,7 +46,7 @@ namespace Edu_QuizGen.Repository
         }
 
         public async Task<Question> GetQuestionByIdAsync(int id)
-            => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Id == id && !s.IsDisabled).FirstOrDefaultAsync();
+            => await _dbContext.Questions.Include(o => o.Options).Include(q=>q.Quiz).Where(s => s.Id == id && !s.IsDisabled).FirstOrDefaultAsync();
         
 
         public async Task<IEnumerable<Question>> GetQuestionsByQuizId(int QuizId)

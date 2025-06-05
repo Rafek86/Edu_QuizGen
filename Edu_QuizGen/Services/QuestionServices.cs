@@ -1,6 +1,5 @@
 ﻿using Edu_QuizGen.DTOs;
 using Edu_QuizGen.Errors;
-using Edu_QuizGen.Models;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -125,7 +124,7 @@ namespace Edu_QuizGen.Services
             return Result.Success(pagedResult);
         }
 
-        public async Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id)
+        public async Task<Result<QuestionResponseDTO>> GetQuestionByIdAsync(int id)
         {
             var question = await _repository.GetQuestionByIdAsync(id);
             if (question == null)
@@ -137,6 +136,7 @@ namespace Edu_QuizGen.Services
                 Text = question.Text,
                 Type = question.Type,
                 CorrectAnswer = question.CorrectAnswer,
+                QuizId=question.QuizId,
                 Options = question.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
             };
 

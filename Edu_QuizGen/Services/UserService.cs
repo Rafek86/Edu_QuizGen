@@ -29,7 +29,7 @@ public class UserService(UserManager<ApplicationUser>userManager,ApplicationDbCo
     
         var user =await _userManager.FindByIdAsync(userId);
 
-        user.FirstName = request.FirsName; 
+        user.FirstName = request.FirstName; 
         user.LastName = request.LastName;
 
         await _userManager.UpdateAsync(user);

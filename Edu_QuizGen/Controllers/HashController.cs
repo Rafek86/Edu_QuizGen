@@ -100,7 +100,7 @@ namespace Edu_QuizGen.Controllers
         }
 
         [HttpPost("check")]
-        public async Task<IActionResult> CheckPdfExists( IFormFile file)
+        public async Task<IActionResult> CheckPdfExists(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {

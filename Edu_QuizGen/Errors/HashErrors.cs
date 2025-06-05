@@ -5,40 +5,43 @@ public static class HashErrors
     public static readonly Error FileEmpty = new(
         "Hash.FileEmpty",
         "File is empty or null",
-        400);
+        StatusCodes.Status400BadRequest);
 
     public static readonly Error InvalidFileType = new(
         "Hash.InvalidFileType",
         "File is not a PDF",
-        400);
+        StatusCodes.Status400BadRequest);
 
     public static readonly Error HashCalculationFailed = new(
         "Hash.HashCalculationFailed",
         "Failed to calculate file hash",
-        500);
+        StatusCodes.Status500InternalServerError);
 
     public static readonly Error DuplicateCheckFailed = new(
         "Hash.DuplicateCheckFailed",
         "Error checking PDF duplicate",
-        500);
+        StatusCodes.Status500InternalServerError);
+
 
     public static readonly Error SaveFailed = new(
         "Hash.SaveFailed",
         "Error saving PDF",
-        500);
+        StatusCodes.Status500InternalServerError);
+
 
     public static readonly Error RetrievalFailed = new(
         "Hash.RetrievalFailed",
         "Failed to retrieve saved document",
-        500);
+        StatusCodes.Status500InternalServerError);
+
 
     public static readonly Error QuizNotFound = new(
         "Hash.QuizNotFound",
         "Quiz not found",
-        404);
+                StatusCodes.Status404NotFound);
 
     public static readonly Error DatabaseError = new(
         "Hash.DatabaseError",
         "Database operation failed",
-        500);
+        StatusCodes.Status500InternalServerError);
 }

@@ -24,6 +24,27 @@ namespace Edu_QuizGen.Repository
             .Include(o => o.Options)
             .FirstOrDefaultAsync(q => !q.IsDisabled && q.Id == id);
 
+        public async Task<PagedResult<Question>> GetPagedQuestionsAsync(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1 || pageSize < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber));
+
+            var totalItems = await _dbContext.Questions.CountAsync(q => !q.IsDisabled);
+            var questions = await _dbContext.Questions
+                .Include(o => o.Options)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Question>
+            {
+                Items = questions,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+        }
+
         public async Task<Question> GetQuestionByIdAsync(int id)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Id == id && !s.IsDisabled).FirstOrDefaultAsync();
         

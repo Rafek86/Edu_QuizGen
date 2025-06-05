@@ -1,33 +1,47 @@
-﻿using Edu_QuizGen.DTOs;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using Edu_QuizGen.DTOs;
 using Edu_QuizGen.Errors;
+using Edu_QuizGen.Models;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
+using Edu_QuizGen.Abstractions;
 
 namespace Edu_QuizGen.Services;
 
 public class HashService : IHashService
 {
     private readonly IHashRepository _repository;
+    private readonly IQuizRepository _quizRepository;
 
-    public HashService(IHashRepository repository)
+    public HashService(IHashRepository repository, IQuizRepository quizRepository)
     {
         _repository = repository;
+        _quizRepository = quizRepository; 
     }
 
-    public async Task<string> CalculatePdfHashAsync(IFormFile file)
+    public async Task<Result<string>> CalculatePdfHashAsync(IFormFile file)
     {
-        if (file == null || file.Length == 0)
+        try
         {
-            throw new ArgumentException("File is empty or null", nameof(file));
+            if (file == null || file.Length == 0)
+            {
+                return Result.Failure<string>(HashErrors.FileEmpty);
+            }
+
+            using var stream = file.OpenReadStream();
+            using var sha256 = SHA256.Create();
+
+            stream.Position = 0;
+            var hashBytes = await sha256.ComputeHashAsync(stream);
+            var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+
+            return Result.Success(hash);
         }
-
-        using var stream = file.OpenReadStream();
-        using var sha256 = SHA256.Create();
-        stream.Position = 0;
-        var hashBytes = await sha256.ComputeHashAsync(stream);
-        stream.Position = 0;
-
-        return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+        catch (Exception)
+        {
+            return Result.Failure<string>(HashErrors.HashCalculationFailed);
+        }
     }
 
     public async Task<Result<HashCheckResponse>> IsDuplicatePdfAsync(IFormFile file)
@@ -44,8 +58,13 @@ public class HashService : IHashService
                 return Result.Failure<HashCheckResponse>(HashErrors.InvalidFileType);
             }
 
-            string fileHash = await CalculatePdfHashAsync(file);
-            var existingDocument = await _repository.GetHashResponseByHashAsync(fileHash);
+            var hashResult = await CalculatePdfHashAsync(file);
+            if (hashResult.IsFailure)
+            {
+                return Result.Failure<HashCheckResponse>(hashResult.Error);
+            }
+
+            var existingDocument = await _repository.GetHashResponseByHashAsync(hashResult.Value);
 
             if (existingDocument != null)
             {
@@ -84,9 +103,19 @@ public class HashService : IHashService
                 return Result.Failure<HashResponse>(HashErrors.InvalidFileType);
             }
 
-            string fileHash = await CalculatePdfHashAsync(file);
-            var existingDocument = await _repository.GetHashResponseByHashAsync(fileHash);
+            var quizExists = await _quizRepository.GetByIdAsync(quizId);
+            if (quizExists is null)
+            {
+                return Result.Failure<HashResponse>(HashErrors.QuizNotFound);
+            }
 
+            var hashResult = await CalculatePdfHashAsync(file);
+            if (hashResult.IsFailure)
+            {
+                return Result.Failure<HashResponse>(hashResult.Error);
+            }
+
+            var existingDocument = await _repository.GetHashResponseByHashAsync(hashResult.Value);
             if (existingDocument != null)
             {
                 return Result.Success(existingDocument);
@@ -95,14 +124,13 @@ public class HashService : IHashService
             var pdfDocument = new Hash
             {
                 Id = Guid.NewGuid(),
-                FileHash = fileHash,
+                FileHash = hashResult.Value,
                 QuizId = quizId
             };
 
             await _repository.AddAsync(pdfDocument);
 
-            var savedDocument = await _repository.GetHashResponseByHashAsync(fileHash);
-
+            var savedDocument = await _repository.GetHashResponseByHashAsync(hashResult.Value);
             if (savedDocument == null)
             {
                 return Result.Failure<HashResponse>(HashErrors.RetrievalFailed);
@@ -110,8 +138,9 @@ public class HashService : IHashService
 
             return Result.Success(savedDocument);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"Error in SavePdfAsync: {ex.Message}");
             return Result.Failure<HashResponse>(HashErrors.SaveFailed);
         }
     }

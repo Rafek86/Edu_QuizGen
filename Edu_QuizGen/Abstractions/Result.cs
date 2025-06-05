@@ -23,7 +23,7 @@ public class Result
 
     public static Result<TValue> Success<TValue>(TValue value) => new(true, Error.None, value);
   
-    public static Result<TValue> Failure<TValue>(Error error) => new(false, Error.None, default);
+    public static Result<TValue> Failure<TValue>(Error error) => new(false, error, default);
     
 }
 

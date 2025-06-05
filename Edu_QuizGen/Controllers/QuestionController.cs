@@ -41,6 +41,17 @@ namespace Edu_QuizGen.Controllers
             return Ok(result.Value);
         }
 
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<QuestionDTO>>> GetPaged(int pageNumber = 1, int pageSize = 10)
+        {
+            var result = await service.GetPagedQuestionsAsync(pageNumber, pageSize);
+            if (result.IsFailure)
+                return result.ToProblem();
+
+
+            return Ok(result.Value);
+        }
+
         [HttpGet("{questionId}")]
         public async Task<ActionResult<QuestionDTO>> GetById(int questionId)
         {

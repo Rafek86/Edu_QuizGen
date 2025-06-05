@@ -8,6 +8,7 @@ namespace Edu_QuizGen.Service_Abstraction
         public Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questions);
 
         public Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id);
+        public Task<Result<PagedResult<QuestionDTO>>> GetPagedQuestionsAsync(int pageNumber, int pageSize);
         public Task<Result<IEnumerable<QuestionDTO>>> GetAllQuestionsAsync();
         public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByTypeAsync(QuestionType type);
         public Task<Result<IEnumerable<QuestionDTO>>> GetQuestionsByQuizId(int QuizId);

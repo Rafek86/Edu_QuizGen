@@ -51,6 +51,8 @@ public static class DependencyInjection
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IQuestionSevice, QuestionServices>();
         services.AddScoped<IOptionService, OptionServices>();
+        services.AddScoped<IHashService, HashService>();
+        services.AddScoped<IQuizService, QuizService>();
 
         services.AddScoped<IEmailSender, EmailService>();
 
@@ -61,6 +63,8 @@ public static class DependencyInjection
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IOptionRepository, OptionRepository>();
+        services.AddScoped<IHashRepository, HashRepository>();
+        services.AddScoped<IQuizRepository, QuizRepository>();
 
         services.AddHttpContextAccessor();  
 

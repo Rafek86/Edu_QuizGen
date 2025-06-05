@@ -98,6 +98,32 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
+        public async Task<Result<PagedResult<QuestionDTO>>> GetPagedQuestionsAsync(int pageNumber, int pageSize)
+        {
+            var questionRepo =await  _repository.GetPagedQuestionsAsync(pageNumber, pageSize);
+
+            if (questionRepo == null || !questionRepo.Items.Any())
+                return Result.Failure<PagedResult<QuestionDTO>>(QuestionErrors.questionlistIsEmptyError);
+
+            var questionsDto = questionRepo.Items.Select(q => new QuestionDTO
+            {
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
+            });
+
+            var pagedResult = new PagedResult<QuestionDTO>
+            {
+                Items = questionsDto,
+                PageNumber = questionRepo.PageNumber,
+                PageSize = questionRepo.PageSize,
+                TotalItems = questionRepo.TotalItems
+            };
+
+            return Result.Success(pagedResult);
+        }
+
         public async Task<Result<QuestionDTO>> GetQuestionByIdAsync(int id)
         {
             var question = await _repository.GetQuestionByIdAsync(id);

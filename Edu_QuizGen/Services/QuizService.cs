@@ -26,8 +26,7 @@ namespace Edu_QuizGen.Services;
                     q.Title,
                     q.Description,
                     q.IsDisabled,
-                    q.TotalQuestions,
-                    q.Hash?.FileHash
+                    q.TotalQuestions
                 ));
 
             return Result.Success(activeQuizzes);
@@ -44,8 +43,7 @@ namespace Edu_QuizGen.Services;
                 quiz.Title,
                 quiz.Description,
                 quiz.IsDisabled,
-                quiz.TotalQuestions,
-                quiz.Hash?.FileHash
+                quiz.TotalQuestions
             );
 
             return Result.Success(response);
@@ -69,8 +67,7 @@ namespace Edu_QuizGen.Services;
                 quiz.Title,
                 quiz.Description,
                 quiz.IsDisabled,
-                quiz.TotalQuestions,
-                quiz.Hash.FileHash
+                quiz.TotalQuestions
             );
 
             return Result.Success(response);
@@ -102,8 +99,7 @@ namespace Edu_QuizGen.Services;
                 quiz.Title,
                 quiz.Description,
                 quiz.IsDisabled,
-                quiz.TotalQuestions,
-                quiz.Hash?.FileHash
+                quiz.TotalQuestions
             );
 
             return Result.Success(response);
@@ -132,8 +128,7 @@ namespace Edu_QuizGen.Services;
                 q.Title,
                 q.Description,
                 q.IsDisabled,
-                q.TotalQuestions,
-                q.Hash?.FileHash
+                q.TotalQuestions
             ));
 
             return Result.Success(response);
@@ -147,8 +142,7 @@ namespace Edu_QuizGen.Services;
                 q.Title,
                 q.Description,
                 q.IsDisabled,
-                q.TotalQuestions,
-                q.Hash?.FileHash
+                q.TotalQuestions
             ));
 
             return Result.Success(response);
@@ -215,8 +209,7 @@ namespace Edu_QuizGen.Services;
                 q.Title,
                 q.Description,
                 q.IsDisabled,
-                q.TotalQuestions,
-                q.Hash?.FileHash
+                q.TotalQuestions
             ));
 
             return Result.Success(response);
@@ -233,8 +226,7 @@ namespace Edu_QuizGen.Services;
                 quiz.Title,
                 quiz.Description,
                 quiz.IsDisabled,
-                quiz.TotalQuestions,
-                quiz.Hash?.FileHash
+                quiz.TotalQuestions
             );
 
             return Result.Success(response);

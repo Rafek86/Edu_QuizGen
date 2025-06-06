@@ -5,6 +5,5 @@ public record QuizResponse(
      string Title,
      string Description,
      bool IsDisabled,
-     int TotalQuestions,
-     string? HashValue
+     int TotalQuestions
  );

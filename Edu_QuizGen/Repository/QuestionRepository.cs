@@ -16,6 +16,7 @@ namespace Edu_QuizGen.Repository
             await _dbContext.Questions
                 .Where(s => !s.IsDisabled)
                 .Include(s => s.Options)
+                .Include(s => s.Quiz)
                 .ToListAsync();
 
         public async Task<Question?> GetByIdAsync(int id) => 

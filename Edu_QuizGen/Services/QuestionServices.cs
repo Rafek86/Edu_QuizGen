@@ -29,7 +29,7 @@ namespace Edu_QuizGen.Services
                 Text = questionDto.Text,
                 Type = questionDto.Type,
                 CorrectAnswer = questionDto.CorrectAnswer,
-                QuizId = questionDto.QuizId,
+                QuizId = questionDto.QuizId,    
                 Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
             };
 
@@ -91,6 +91,7 @@ namespace Edu_QuizGen.Services
                 Text = q.Text,
                 Type = q.Type,
                 CorrectAnswer = q.CorrectAnswer,
+                QuizId = q.QuizId,
                 Options = q.Options?.Select(o => new OptionDTO { Text = o.Text }).ToList()
 
             });

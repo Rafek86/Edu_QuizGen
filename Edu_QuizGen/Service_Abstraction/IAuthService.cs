@@ -10,6 +10,8 @@ public interface IAuthService
 
     Task<Result> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken);
 
+    Task<Result> RegisterAsTeacherAsync(RegisterRequest request, CancellationToken cancellationToken);
+
     Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken);
 
     Task<Result> ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request);

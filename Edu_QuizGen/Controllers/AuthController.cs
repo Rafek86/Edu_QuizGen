@@ -56,6 +56,17 @@ public class AuthController(IAuthService authService,IOptions<JwtOptions> option
             result.ToProblem();
     }
 
+    [HttpPost("register-as-teacher")]
+    public async Task<IActionResult> RegisterAsTeacher([FromBody] RegisterRequest request, CancellationToken cancellationToken)
+    {
+
+        var result = await _authService.RegisterAsTeacherAsync(request, cancellationToken);
+      
+        return result.IsSuccess ?
+            Ok(result) :
+            result.ToProblem();
+    }
+
     [HttpPost("confirm-email")]
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request, CancellationToken cancellationToken)
     {

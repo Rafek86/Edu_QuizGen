@@ -54,6 +54,41 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         }
 
         return Result.Failure<AuthResponse>(result.IsNotAllowed? UserErrors.EmailNotConfirmed:UserErrors.InvalidCredentials);
+    } 
+    
+    public async Task<Result<AuthResponse>> LoginAsTeacher(string email, string passowrd, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+            return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
+
+        var result = await _signInManager.PasswordSignInAsync(user, passowrd, false, false);
+
+        if (result.Succeeded)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            var (token, expiresin) = _jwtProvider.GenrateToken(user,role!);
+
+            var refreshToken = GenerateRefreshToken();
+            var refreshTokenExpirydays = _refreshTokenExpiryDays;
+
+            user.RefreshTokens.Add(new RefreshToken
+            {
+                Token = refreshToken,
+                ExpiresOn = DateTime.UtcNow.AddDays(refreshTokenExpirydays)
+            });
+
+            await _userManager.UpdateAsync(user);
+
+            var response = new AuthResponse(user.Id, user.Email!, user.FirstName, user.LastName, token, expiresin, refreshToken, refreshTokenExpirydays);
+
+            return Result.Success<AuthResponse>(response);
+        }
+
+        return Result.Failure<AuthResponse>(result.IsNotAllowed? UserErrors.EmailNotConfirmed:UserErrors.InvalidCredentials);
     }
 
     public async Task<Result<AuthResponse>> GetRefreshTokenAsync(string token, string RefreshToken, CancellationToken cancellationToken)
@@ -174,6 +209,57 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         
          return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
     }   
+
+    public async Task<Result> RegisterAsTeacherAsync(RegisterRequest request, CancellationToken cancellationToken) 
+    {
+        var emailExist = await _userManager.Users.AnyAsync(x => x.Email == request.Email);
+
+        if (emailExist)
+            return Result.Failure(UserErrors.DuplicatedEmail);
+
+        //TODO: Make it Student 
+        var user = new Teacher {
+            
+        Email=request.Email,
+        UserName=request.Email,
+        FirstName=request.FirstName,
+        LastName=request.LastName,
+        };
+
+        var result = await _userManager.CreateAsync(user,request.Password);
+
+        if (result.Succeeded) {
+            #region Before
+            //    var (token, expirin) = _jwtProvider.GenrateToken(user);
+            //    var refreshToken = GenerateRefreshToken();
+            //    var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+            //    user.RefreshTokens.Add(new RefreshToken
+            //    {
+            //        Token = refreshToken,
+            //        ExpiresOn = refreshTokenExpiration
+            //    });
+            //    await _userManager.UpdateAsync(user);
+
+            //    var response = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, token, expirin, refreshToken, refreshTokenExpiration);
+
+            //    return Result.Success(response); 
+            #endregion
+            var code =await _userManager.GenerateEmailConfirmationTokenAsync(user); 
+            code=WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            //TODO:: SendEmail 
+            await SendConfirmationEmail(user, code);
+
+            //Just in the DEV Level
+            return Result.Success(code);    
+        }
+
+        
+         var error = result.Errors.First();
+        
+         return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+    }   
         
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken) 
     {
@@ -201,7 +287,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         if (result.Succeeded) {
 
-            await _userManager.AddToRoleAsync(user, DefaultRoles.Student);
+            await _userManager.AddToRoleAsync(user, DefaultRoles.Teacher);
 
             return Result.Success();    
        

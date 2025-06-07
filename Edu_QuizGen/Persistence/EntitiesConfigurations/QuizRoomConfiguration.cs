@@ -10,11 +10,11 @@ namespace Edu_QuizGen.Persistence.EntitiesConfigurations
             builder.HasOne(x => x.Room)
                 .WithMany(s => s.QuizRoom)
                 .HasForeignKey(x => x.RoomId);
-
+            
             builder.HasOne(x => x.Quiz)
                 .WithMany(s => s.QuizRoom)
                 .HasForeignKey(x => x.QuizId);
-
+            
 
             builder.HasData(new QuizRoom
             {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Edu_QuizGen.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edu_QuizGen.Contracts.Quiz;
 
@@ -11,5 +12,7 @@ public record CreateQuizRequest(
         string Description,
 
       [Range(1, int.MaxValue, ErrorMessage = "Total questions must be at least 1")]
-        int TotalQuestions
-  );
+        int TotalQuestions,
+
+        ICollection<QuestionResponseDTO> Questions
+);

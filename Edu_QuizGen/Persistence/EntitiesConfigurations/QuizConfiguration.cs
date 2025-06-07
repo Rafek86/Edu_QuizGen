@@ -6,7 +6,6 @@
         {
             builder.ToTable("Quiz");
 
-
             builder.HasData(new Quiz
             {
                 Id = 1,

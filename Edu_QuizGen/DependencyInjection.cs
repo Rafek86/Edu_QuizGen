@@ -52,7 +52,7 @@ public static class DependencyInjection
         services.AddScoped<IQuestionSevice, QuestionServices>();
         services.AddScoped<IOptionService, OptionServices>();
         services.AddScoped<IHashService, HashService>();
-        services.AddScoped<IQuizService, QuizService>();
+        //services.AddScoped<IQuizService, QuizService>();
 
         services.AddScoped<IEmailSender, EmailService>();
 

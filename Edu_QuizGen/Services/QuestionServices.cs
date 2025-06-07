@@ -1,5 +1,6 @@
 ﻿using Edu_QuizGen.DTOs;
 using Edu_QuizGen.Errors;
+using Edu_QuizGen.Models;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -39,6 +40,7 @@ namespace Edu_QuizGen.Services
 
         public async Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questionsDto)
         {
+            var response = new List<QuestionResponseDTO>();
             foreach (var questionDto in questionsDto)
             {
                 // Validate question type and correct answer
@@ -65,8 +67,19 @@ namespace Edu_QuizGen.Services
                     Options = questionDto.Options?.Select(o => new Option { Text = o.Text }).ToList()
                 };
                 await _repository.AddAsync(question);
+
+                var questionResponse = new QuestionResponseDTO
+                {
+                    Id = question.Id,
+                    QuizId = question.QuizId,
+                    Text = question.Text,
+                    Type = question.Type,
+                    CorrectAnswer = question.CorrectAnswer,
+                    Options = questionDto.Options
+                };
+                response.Add(questionResponse);
             }
-            return Result.Success();
+            return Result.Success(response);
         }
 
         public async Task<Result> DeleteQuestion(int id)
@@ -198,7 +211,6 @@ namespace Edu_QuizGen.Services
             return Result.Success(questionsDto);
         }
 
-        //?! it doesn't work FIXXXXXXXXXX it
         public async Task<Result> UpdateQuestion(int id, QuestionDTO questionDto)
         {
             var question = await _repository.GetQuestionByIdAsync(id);

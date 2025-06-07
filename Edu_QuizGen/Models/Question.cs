@@ -11,5 +11,6 @@
         public int QuizId { get; set; }
         public Quiz Quiz { get; set; }
         public ICollection<Option>? Options { get; set; } = new List<Option>();
+        public ICollection<QuizQuestions> quizQuestions { get; set; } = new HashSet<QuizQuestions>();
     }
 }

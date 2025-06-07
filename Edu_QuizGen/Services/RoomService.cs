@@ -21,11 +21,11 @@ public class RoomService : IRoomService
         _roomStudentRepository = roomStudentRepository;
     }
 
-    public async Task<Result> AddRoomAsync(string roomName, string teacherId)
+    public async Task<Result<string>> AddRoomAsync(string roomName, string teacherId)
     {
         var teacher = await _teacherRepository.GetByIdAsync(teacherId);
         if (teacher is null || teacher.IsDisabled)
-            return Result.Failure(TeacherErrors.NotFound);
+            return Result.Failure<string>(TeacherErrors.NotFound);
 
         var room = new Room
         {
@@ -35,7 +35,7 @@ public class RoomService : IRoomService
         };
 
         await _roomRepository.AddAsync(room);
-        return Result.Success();
+        return Result.Success(room.Id);
     }
 
     public async Task<Result<IEnumerable<GerRoomResponse>>> GetRoomsByTeacherAsync(string teacherId)
@@ -78,20 +78,20 @@ public class RoomService : IRoomService
         return Result.Success();
     }
 
-    public async Task<Result> JoinRoomAsync(string roomId, string studentId)
+    public async Task<Result<string>> JoinRoomAsync(string roomId, string studentId)
     {
         var room =await  _roomRepository.GetByIdAsync(roomId);
         var student = await _studentRepository.GetByIdAsync(studentId);
         var studentRoom = await _roomStudentRepository.GetStudentRoom(studentId, roomId);
 
         if (room is null || room.IsDisabled)
-            return Result.Failure(RoomErrors.NotFound);
+            return Result.Failure<string>(RoomErrors.NotFound);
 
         if (student is null || student.IsDisabled)
-            return Result.Failure(StudentErrors.NotFound);
+            return Result.Failure<string>(StudentErrors.NotFound);
 
        if(studentRoom is not null)
-            return Result.Failure(RoomErrors.AlreadyJoined);
+            return Result.Failure<string>(RoomErrors.AlreadyJoined);
 
 
         var newStudentRoom = new StudentRoom
@@ -100,7 +100,7 @@ public class RoomService : IRoomService
             StudentId = studentId
         };
         await _roomStudentRepository.AddAsync(newStudentRoom);
-        return Result.Success();
+        return Result.Success(newStudentRoom.RoomId);
     }
 
     public async Task<Result> LeaveRoomAsync(string roomId, string studentId)

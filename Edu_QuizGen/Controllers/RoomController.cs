@@ -17,7 +17,7 @@ public class RoomController(IRoomService roomService) : ControllerBase
         if (result.IsFailure)
             return result.ToProblem();
 
-        return Ok("Room created successfully.");
+        return Ok(result.Value);
     }
 
     [HttpGet("teacher/{teacherId}")]
@@ -57,7 +57,7 @@ public class RoomController(IRoomService roomService) : ControllerBase
         if (result.IsFailure)
             return result.ToProblem();
 
-        return Ok("Joined room successfully.");
+        return Ok(result.Value);
     }
 
     [HttpDelete("student/{roomId}/{studentId}")]

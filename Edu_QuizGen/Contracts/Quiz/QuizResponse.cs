@@ -8,6 +8,5 @@ public record QuizResponse(
      string Description,
      bool IsDisabled,
      int TotalQuestions,
-     string hashVal,
-     ICollection<QuestionResponseDTO> Questions
+     string hashVal
  );

@@ -13,6 +13,7 @@ public class QuizRepository : GenericRepository<Quiz>, IQuizRepository
     public async Task<IEnumerable<Quiz>> GetAllQuizzesByRoomId(string roomId)
     {
         return await _dbContext.QuizRooms
+            .Include(x => x.Quiz)
             .Where(x => x.RoomId == roomId && !x.IsDisabled)
             .Select(x => x.Quiz)
             .Where(q => !q.IsDisabled)

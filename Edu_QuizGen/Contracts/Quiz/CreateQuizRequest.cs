@@ -12,7 +12,5 @@ public record CreateQuizRequest(
         string Description,
 
       [Range(1, int.MaxValue, ErrorMessage = "Total questions must be at least 1")]
-        int TotalQuestions,
-
-        ICollection<QuestionResponseDTO> Questions
+        int TotalQuestions
 );

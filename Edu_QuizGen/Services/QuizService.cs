@@ -19,15 +19,15 @@ public class QuizService : IQuizService
 
     public async Task<Result<IEnumerable<QuizResponse>>> GetAllQuizzesAsync()
     {
-        var quizzes = await _quizRepository.GetAllAsync();
+        var quizzes = await _quizRepository.GetActiveQuizzesAsync();
         var activeQuizzes = quizzes.Where(q => !q.IsDisabled)
             .Select(q => new QuizResponse(
                 q.Id,
                 q.Title,
                 q.Description,
                 q.IsDisabled,
-                q.TotalQuestions,
-                q.Hash?.FileHash
+                q.quizQuestions.Count(),
+                q.Hash?.FileHash ?? "manual"
             ));
 
         return Result.Success(activeQuizzes);
@@ -44,8 +44,8 @@ public class QuizService : IQuizService
             quiz.Title,
             quiz.Description,
             quiz.IsDisabled,
-            quiz.TotalQuestions,
-            quiz.Hash?.FileHash
+            quiz.quizQuestions.Count(),
+            quiz.Hash?.FileHash ?? "manual"
         );
 
         return Result.Success(response);
@@ -69,8 +69,8 @@ public class QuizService : IQuizService
             quiz.Title,
             quiz.Description,
             quiz.IsDisabled,
-            quiz.TotalQuestions,
-            quiz.Hash.FileHash
+            quiz.quizQuestions.Count(),
+            quiz.Hash.FileHash ?? "manual"
         );
 
         return Result.Success(response);
@@ -102,7 +102,7 @@ public class QuizService : IQuizService
             quiz.Title,
             quiz.Description,
             quiz.IsDisabled,
-            quiz.TotalQuestions,
+            quiz.quizQuestions.Count(),
             quiz.Hash?.FileHash
         );
 
@@ -200,7 +200,7 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.TotalQuestions,
-            quiz.Hash?.FileHash,
+            quiz.Hash?.FileHash ?? "manual",
             assignedRooms
         );
 

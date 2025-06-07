@@ -287,7 +287,10 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         if (result.Succeeded) {
 
+            if(user is Teacher)
             await _userManager.AddToRoleAsync(user, DefaultRoles.Teacher);
+            else
+            await _userManager.AddToRoleAsync(user, DefaultRoles.Student);
 
             return Result.Success();    
        

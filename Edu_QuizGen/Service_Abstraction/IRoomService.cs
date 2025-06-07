@@ -8,4 +8,7 @@ public interface IRoomService
     Task<Result<IEnumerable<GerRoomResponse>>> GetRoomsByTeacherAsync(string teacherId);
     Task<Result> UpdateRoomAsync(string roomId, string teacherId, string newName);
     Task<Result> DeleteRoomAsync(string roomId, string teacherId);
+    Task<Result> JoinRoomAsync(string roomId, string studentId);
+    Task<Result> LeaveRoomAsync(string roomId, string studentId);
+    Task<Result<IEnumerable<StudentRoomsResponse>>> GetAllStudentRoomsAsync(string studentId);
 }

@@ -19,4 +19,11 @@ public static class RoomErrors
 
     public static readonly Error InvalidId =
         new("Room.InvalidId", "The provided Room ID is invalid", StatusCodes.Status400BadRequest);
+
+
+    public static readonly Error AlreadyJoined =
+        new("Room.AlreadyJoined", "You already join this Room", StatusCodes.Status204NoContent);
+
+    public static readonly Error NotJoined =
+        new("Room.NotJoined", "You have not joined this Room", StatusCodes.Status204NoContent);
 }

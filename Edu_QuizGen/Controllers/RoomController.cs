@@ -49,4 +49,33 @@ public class RoomController(IRoomService roomService) : ControllerBase
 
         return Ok("Room deleted successfully.");
     }
+
+    [HttpPost("student/{roomId}/{studentId}")]
+    public async Task<IActionResult> JoinRoom(string roomId, string studentId)
+    {
+        var result = await _roomService.JoinRoomAsync(roomId, studentId);
+        if (result.IsFailure)
+            return result.ToProblem();
+
+        return Ok("Joined room successfully.");
+    }
+
+    [HttpDelete("student/{roomId}/{studentId}")]
+    public async Task<IActionResult> LeaveRoom(string roomId, string studentId)
+    {
+        var result = await _roomService.LeaveRoomAsync(roomId, studentId);
+        if (result.IsFailure)
+            return result.ToProblem();
+        return Ok("Left room successfully.");
+    }
+
+    [HttpGet("student/{studentId}")]
+    public async Task<IActionResult> GetAllStudentRooms(string studentId)
+    {
+        var result = await _roomService.GetAllStudentRoomsAsync(studentId);
+        if (result.IsFailure)
+            return result.ToProblem();
+        return Ok(result.Value);
+    }
+
 }

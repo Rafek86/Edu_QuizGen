@@ -65,6 +65,7 @@ public static class DependencyInjection
         services.AddScoped<IOptionRepository, OptionRepository>();
         services.AddScoped<IHashRepository, HashRepository>();
         services.AddScoped<IQuizRepository, QuizRepository>();
+        services.AddScoped<IRoomStudentRepository, RoomStudentRepository>();
 
         services.AddHttpContextAccessor();  
 

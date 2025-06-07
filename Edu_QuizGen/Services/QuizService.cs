@@ -1,5 +1,4 @@
-﻿/*
-using AutoMapper.Configuration.Annotations;
+﻿using AutoMapper.Configuration.Annotations;
 using Edu_QuizGen.Contracts.Quiz;
 using Edu_QuizGen.DTOs;
 using Edu_QuizGen.Errors;
@@ -24,7 +23,7 @@ namespace Edu_QuizGen.Services;
 
     public async Task<Result<IEnumerable<QuizResponse>>> GetAllQuizzesAsync()
     {
-        var quizzes = await _quizRepository.GetAllAsync();
+        var quizzes = await _quizRepository.GetActiveQuizzesAsync();
 
         var activeQuizTasks = quizzes
             .Where(q => !q.IsDisabled)
@@ -107,7 +106,7 @@ namespace Edu_QuizGen.Services;
                 quiz.IsDisabled,
                 quiz.quizQuestions.Count(),
                 quiz.Hash.FileHash ?? "manual",
-                result.//valueeeeeee?
+                result.Value.ToList()
             );
 
             return Result.Success(response);
@@ -189,16 +188,21 @@ namespace Edu_QuizGen.Services;
     public async Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByTeacherIdAsync(string teacherId)
         {
             var quizzes = await _quizRepository.GetQuizzesByTeacherIdAsync(teacherId);
-            var response = quizzes.Select(q => new QuizResponse(
+            var response = quizzes.Select(async q => new QuizResponse(
                 q.Id,
                 q.Title,
                 q.Description,
                 q.IsDisabled,
                 q.quizQuestions.Count(),
-                q.Hash.FileHash ?? "manual"
+                q.Hash.FileHash ?? "manual",
+                (await _questionSevice.GetQuestionsByQuizId(q.Id)).Value.ToList()
             ));
+        var activeQuizzes = await Task.WhenAll(response);
 
-            return Result.Success(response);
+        // Filter out any null results (if you handled errors)
+        var successfulQuizzes = activeQuizzes.Where(q => q != null).ToList();
+
+        return Result.Success<IEnumerable<QuizResponse>>(successfulQuizzes);
         }
     
 
@@ -255,7 +259,8 @@ namespace Edu_QuizGen.Services;
             return Result.Success(response);
         }
     
-     * ماهي هي getAll
+     //* ماهي هي getAll
+     /*
         public async Task<Result<IEnumerable<QuizResponse>>> GetActiveQuizzesAsync()
         {
             var quizzes = await _quizRepository.GetActiveQuizzesAsync();
@@ -270,7 +275,7 @@ namespace Edu_QuizGen.Services;
 
             return Result.Success(response);
         }
-   
+   */
         public async Task<Result<QuizResponse>> GetQuizByHashAsync(string hashValue)
         {
             var quiz = await _quizRepository.GetQuizByHashAsync(hashValue);
@@ -283,11 +288,10 @@ namespace Edu_QuizGen.Services;
                 quiz.Description,
                 quiz.IsDisabled,
                 quiz.quizQuestions.Count(),
-                quiz.Hash.FileHash ?? "manual"
+                quiz.Hash.FileHash ?? "manual",
+                (await _questionSevice.GetQuestionsByQuizId(quiz.Id)).Value.ToList()
             );
 
             return Result.Success(response);
         }
-   
 }
-*/

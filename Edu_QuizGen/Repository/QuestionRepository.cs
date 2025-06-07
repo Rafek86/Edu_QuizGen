@@ -58,6 +58,7 @@ namespace Edu_QuizGen.Repository
 
         public async Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Type == type && !s.IsDisabled).ToListAsync();
+
         public async Task UpdateQuestion(Question question)
         {
             var Options = await _dbContext.Options

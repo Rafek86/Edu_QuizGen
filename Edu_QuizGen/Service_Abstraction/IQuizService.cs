@@ -14,6 +14,6 @@ public interface IQuizService
     Task<Result> AssignQuizToRoomAsync(int quizId, string roomId);
     Task<Result> RemoveQuizFromRoomAsync(int quizId, string roomId);
     Task<Result<QuizDetailResponse>> GetQuizWithDetailsAsync(int id);
-    Task<Result<IEnumerable<QuizResponse>>> GetActiveQuizzesAsync();
+    //Task<Result<IEnumerable<QuizResponse>>> GetActiveQuizzesAsync();
     Task<Result<QuizResponse>> GetQuizByHashAsync(string hashValue);
 }

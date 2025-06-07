@@ -49,14 +49,14 @@ namespace Edu_QuizGen.Controllers
             var result = await _quizService.GetQuizzesByTeacherIdAsync(teacherId);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
-
+        /*
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveQuizzes()
         {
             var result = await _quizService.GetActiveQuizzesAsync();
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
-
+        */
         [HttpGet("by-hash/{hashValue}")]
         public async Task<IActionResult> GetQuizByHash(string hashValue)
         {

@@ -38,7 +38,7 @@ namespace Edu_QuizGen.Services
             return Result.Success();
         }
 
-        public async Task<Result> AddQuestionAsync(IEnumerable<QuestionDTO> questionsDto)
+        public async Task<Result<IEnumerable<QuestionResponseDTO>>> AddQuestionAsync(IEnumerable<QuestionDTO> questionsDto)
         {
             var response = new List<QuestionResponseDTO>();
             foreach (var questionDto in questionsDto)
@@ -47,15 +47,15 @@ namespace Edu_QuizGen.Services
                 if (questionDto.Type == QuestionType.MCQ)
                 {
                     if (questionDto.Options == null || !questionDto.Options.Any())
-                        return Result.Failure(QuestionErrors.MCQOptionsRequired);
+                        return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.MCQOptionsRequired);
 
                     if (!questionDto.Options.Any(o => o.Text == questionDto.CorrectAnswer))
-                        return Result.Failure(QuestionErrors.CorrectAnswerNotInOptions);
+                        return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.CorrectAnswerNotInOptions);
                 }
                 else if (questionDto.Type == QuestionType.TF)
                 {
                     if (questionDto.CorrectAnswer.ToLower() != "true" && questionDto.CorrectAnswer.ToLower() != "false")
-                        return Result.Failure(QuestionErrors.InvalidTrueFalseAnswer);
+                        return Result.Failure<IEnumerable<QuestionResponseDTO>>(QuestionErrors.InvalidTrueFalseAnswer);
                 }
 
                 var question = new Question
@@ -79,7 +79,7 @@ namespace Edu_QuizGen.Services
                 };
                 response.Add(questionResponse);
             }
-            return Result.Success(response);
+            return Result.Success<IEnumerable<QuestionResponseDTO>>(response);
         }
 
         public async Task<Result> DeleteQuestion(int id)

@@ -47,6 +47,7 @@ public class QuizRepository : GenericRepository<Quiz>, IQuizRepository
     public async Task<IEnumerable<Quiz>> GetActiveQuizzesAsync()
     {
         return await _dbContext.Quizzes
+            .AsNoTracking()
             .Where(q => !q.IsDisabled)
             .Include(q => q.Hash)
             .ToListAsync();

@@ -64,13 +64,13 @@ namespace Edu_QuizGen.Controllers
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateQuiz([FromBody] CreateQuizRequest request)
+        [HttpPost("{roomId}")]
+        public async Task<IActionResult> CreateQuiz([FromRoute]string roomId,[FromBody] CreateQuizRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _quizService.CreateQuizAsync(request);
+            var result = await _quizService.CreateQuizAsync(roomId,request);
             return result.IsSuccess
                 ? CreatedAtAction(nameof(GetQuiz), new { id = result.Value.Id }, result.Value)
                 : BadRequest(result.Error);

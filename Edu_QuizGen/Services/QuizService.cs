@@ -9,12 +9,14 @@ namespace Edu_QuizGen.Services;
 public class QuizService : IQuizService
 {
     private readonly IQuizRepository _quizRepository;
+    private readonly IRoomRepository _roomRepository;
     private readonly IHashRepository _hashRepository;
 
-    public QuizService(IQuizRepository quizRepository, IHashRepository hashRepository)
+    public QuizService(IQuizRepository quizRepository, IHashRepository hashRepository, IRoomRepository roomRepository)
     {
         _quizRepository = quizRepository;
         _hashRepository = hashRepository;
+        _roomRepository = roomRepository;
     }
 
     public async Task<Result<IEnumerable<QuizResponse>>> GetAllQuizzesAsync()
@@ -51,29 +53,43 @@ public class QuizService : IQuizService
         return Result.Success(response);
     }
 
-    public async Task<Result<QuizResponse>> CreateQuizAsync(CreateQuizRequest request)
+    public async Task<Result<QuizResponse>> CreateQuizAsync(string roomId, CreateQuizRequest request)
     {
         var quiz = new Quiz
         {
             Title = request.Title,
             Description = request.Description,
             TotalQuestions = request.TotalQuestions,
-            IsDisabled = false
+            IsDisabled = false,
+            StartAt = request.StartAt,
+            EndAt = request.EndAt,
+            Duration = (int) (request.EndAt -request.StartAt).TotalMinutes
         };
+        
+        var room =await _roomRepository.GetByIdAsync(roomId);
+
+        if(room is null || room.IsDisabled)
+            return Result.Failure<QuizResponse>(QuizErrors.NotFound);
 
 
         await _quizRepository.AddAsync(quiz);
+        var asign = await _quizRepository.AssignQuizToRoomAsync(quiz.Id, roomId);
 
-        var response = new QuizResponse(
-            quiz.Id,
-            quiz.Title,
-            quiz.Description,
-            quiz.IsDisabled,
-            quiz.quizQuestions.Count(),
-            quiz.Hash.FileHash ?? "manual"
-        );
+        if (asign)
+        {
+            var response = new QuizResponse(
+                quiz.Id,
+                quiz.Title,
+                quiz.Description,
+                quiz.IsDisabled,
+                quiz.quizQuestions.Count(),
+               quiz.Hash?.FileHash ?? "manual"
+            );
 
-        return Result.Success(response);
+            return Result.Success(response);
+        }
+
+        return Result.Failure<QuizResponse>(QuizErrors.AssignmentNotFound);
     }
 
     public async Task<Result<QuizResponse>> UpdateQuizAsync(int id, UpdateQuizRequest request)

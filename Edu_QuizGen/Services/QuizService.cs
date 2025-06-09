@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Configuration.Annotations;
+using Edu_QuizGen.Contracts.FastApi;
 using Edu_QuizGen.Contracts.Quiz;
 using Edu_QuizGen.Errors;
 using Edu_QuizGen.Repository_Abstraction;
@@ -11,6 +12,7 @@ public class QuizService : IQuizService
     private readonly IQuizRepository _quizRepository;
     private readonly IRoomRepository _roomRepository;
     private readonly IHashRepository _hashRepository;
+    //private readonly IQuizGenerationService _quizGenerationService;
 
     public QuizService(IQuizRepository quizRepository, IHashRepository hashRepository, IRoomRepository roomRepository)
     {
@@ -29,6 +31,9 @@ public class QuizService : IQuizService
                 q.Description,
                 q.IsDisabled,
                 q.quizQuestions.Count(),
+                q.StartAt ?? DateTime.UtcNow,
+                q.EndAt ?? DateTime.UtcNow,
+                q.Duration ?? 0,
                 q.Hash?.FileHash ?? "manual"
             ));
 
@@ -47,6 +52,9 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.quizQuestions.Count(),
+            quiz.StartAt ?? DateTime.UtcNow,
+            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.Duration ?? 0,
             quiz.Hash?.FileHash ?? "manual"
         );
 
@@ -83,7 +91,11 @@ public class QuizService : IQuizService
                 quiz.Description,
                 quiz.IsDisabled,
                 quiz.quizQuestions.Count(),
-               quiz.Hash?.FileHash ?? "manual"
+                quiz.StartAt ?? DateTime.UtcNow,
+                quiz.EndAt ?? DateTime.UtcNow,
+                quiz.Duration ?? 0,
+                quiz.Hash?.FileHash ?? "manual"
+
             );
 
             return Result.Success(response);
@@ -119,7 +131,10 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.quizQuestions.Count(),
-            quiz.Hash?.FileHash
+            quiz.StartAt ?? DateTime.UtcNow,
+            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.Duration ?? 0,
+            quiz.Hash?.FileHash ?? "manual"
         );
 
         return Result.Success(response);
@@ -149,7 +164,10 @@ public class QuizService : IQuizService
             q.Description,
             q.IsDisabled,
             q.TotalQuestions,
-            q.Hash?.FileHash
+            q.StartAt ?? DateTime.UtcNow,
+            q.EndAt ?? DateTime.UtcNow,
+            q.Duration ?? 0,
+            q.Hash?.FileHash ?? "manual"
         ));
 
         return Result.Success(response);
@@ -164,7 +182,10 @@ public class QuizService : IQuizService
             q.Description,
             q.IsDisabled,
             q.TotalQuestions,
-            q.Hash?.FileHash
+            q.StartAt ?? DateTime.UtcNow,
+            q.EndAt ?? DateTime.UtcNow,
+            q.Duration ?? 0,
+            q.Hash?.FileHash ?? "manual"
         ));
 
         return Result.Success(response);
@@ -231,8 +252,11 @@ public class QuizService : IQuizService
             q.Title,
             q.Description,
             q.IsDisabled,
-            q.TotalQuestions,
-            q.Hash?.FileHash
+            q.TotalQuestions, 
+            q.StartAt ?? DateTime.UtcNow,
+            q.EndAt ?? DateTime.UtcNow,
+            q.Duration ?? 0,
+            q.Hash?.FileHash ?? "manual"
         ));
 
         return Result.Success(response);
@@ -249,10 +273,63 @@ public class QuizService : IQuizService
             quiz.Title,
             quiz.Description,
             quiz.IsDisabled,
-            quiz.TotalQuestions,
-            quiz.Hash?.FileHash
+            quiz.TotalQuestions, 
+            quiz.StartAt ?? DateTime.UtcNow,
+            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.Duration ?? 0,
+            quiz.Hash?.FileHash ?? "manual"
         );
 
         return Result.Success(response);
     }
+    //public async Task<Result<List<QuestionResponse>>> GenerateQuestionsAsync(int quizId, IFormFile pdfFile)
+    //{
+    //    var result = await _quizGenerationService.GenerateQuestionsFromPdfAsync(quizId, pdfFile);
+    //    if (result.IsFailure)
+    //        return Result.Failure<List<QuestionResponse>>(result.Error);
+
+    //    var questionResponses = result.Value.Select(q => new QuestionResponse
+    //    {
+    //        Id = q.Id,
+    //        Text = q.Text,
+    //        Type = q.Type,
+    //        CorrectAnswer = q.CorrectAnswer,
+    //        Explanation = q.Explanation,
+    //        Options = q.Options?.Select(opt => new OptionResponse
+    //        {
+    //            Id = opt.Id,
+    //            Text = opt.Text
+    //        }).ToList()
+    //    }).ToList();
+
+    //    return Result.Success(questionResponses);
+    //}
+
+    //public async Task<Result<List<QuestionResponse>>> GetGeneratedQuestionsAsync(int quizId)
+    //{
+    //    var result = await _quizGenerationService.GetGeneratedQuestionsAsync(quizId);
+    //    if (result.IsFailure)
+    //        return Result.Failure<List<QuestionResponse>>(result.Error);
+
+    //    var questionResponses = result.Value.Select(q => new QuestionResponse
+    //    {
+    //        Id = q.Id,
+    //        Text = q.Text,
+    //        Type = q.Type,
+    //        CorrectAnswer = q.CorrectAnswer,
+    //        Explanation = q.Explanation,
+    //        Options = q.Options?.Select(opt => new OptionResponse
+    //        {
+    //            Id = opt.Id,
+    //            Text = opt.Text
+    //        }).ToList()
+    //    }).ToList();
+
+    //    return Result.Success(questionResponses);
+    //}
+
+    //public async Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds)
+    //{
+    //    return await _quizGenerationService.SaveSelectedQuestionsAsync(quizId, selectedQuestionIds);
+    //}
 }

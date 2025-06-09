@@ -8,5 +8,8 @@ public record QuizResponse(
      string Description,
      bool IsDisabled,
      int TotalQuestions,
+     DateTime StartAt,
+     DateTime EndAt,
+     int DurationInMinutes,
      string hashVal
  );

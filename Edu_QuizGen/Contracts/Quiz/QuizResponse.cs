@@ -10,6 +10,6 @@ public record QuizResponse(
      int TotalQuestions,
      DateTime StartAt,
      DateTime EndAt,
-     int DurationInMinutes,
+     int Duration,
      string hashVal
  );

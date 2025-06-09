@@ -9,5 +9,5 @@ public record CreateQuizRequest(
         int TotalQuestions,
         DateTime StartAt,
         DateTime EndAt,
-        int DurationTime
+        int Duration
 );

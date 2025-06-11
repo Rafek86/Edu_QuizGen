@@ -10,6 +10,7 @@ public interface IQuizService
     Task<Result<QuizResponse>> CreateQuizAsync(string roomId,CreateQuizRequest request);
     Task<Result<QuizResponse>> UpdateQuizAsync(int id, UpdateQuizRequest request);
     Task<Result> DeleteQuizAsync(int id);
+    Task<Result<QuizResponse>> ToggleStatus(int quizId);
     Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByRoomIdAsync(string roomId);
     Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByTeacherIdAsync(string teacherId);
     Task<Result> AssignQuizToRoomAsync(int quizId, string roomId);

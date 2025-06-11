@@ -5,6 +5,8 @@ using Edu_QuizGen.Errors;
 using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
+using System;
+using TimeZoneConverter;
 
 namespace Edu_QuizGen.Services;
 
@@ -66,31 +68,36 @@ public class QuizService : IQuizService
 
         return Result.Success(response);
     }
-
     public async Task<Result<QuizResponse>> CreateQuizAsync(string roomId, CreateQuizRequest request)
     {
+        // Get Cairo time zone (works cross-platform)
+        var cairoTimeZone = TZConvert.GetTimeZoneInfo("Africa/Cairo");
+
+        // Convert input times to Cairo time
+        var startAtCairo = TimeZoneInfo.ConvertTime(request.StartAt.UtcDateTime, TimeZoneInfo.Utc, cairoTimeZone);
+        var endAtCairo = TimeZoneInfo.ConvertTime(request.EndAt.UtcDateTime, TimeZoneInfo.Utc, cairoTimeZone);
+
         var quiz = new Quiz
         {
             Title = request.Title,
             Description = request.Description,
             TotalQuestions = request.TotalQuestions,
             IsDisabled = false,
-            StartAt = request.StartAt,
-            EndAt = request.EndAt,
-            Duration = (int) (request.EndAt -request.StartAt).TotalMinutes,
+            StartAt = new DateTimeOffset(startAtCairo, cairoTimeZone.GetUtcOffset(startAtCairo)),
+            EndAt = new DateTimeOffset(endAtCairo, cairoTimeZone.GetUtcOffset(endAtCairo)),
+            Duration = (int)(endAtCairo - startAtCairo).TotalMinutes,
             AI = request.AI
         };
-        
-        var room =await _roomRepository.GetByIdAsync(roomId);
 
-        if(room is null || room.IsDisabled)
+        var room = await _roomRepository.GetByIdAsync(roomId);
+
+        if (room is null || room.IsDisabled)
             return Result.Failure<QuizResponse>(QuizErrors.NotFound);
 
-
         await _quizRepository.AddAsync(quiz);
-        var asign = await _quizRepository.AssignQuizToRoomAsync(quiz.Id, roomId);
+        var assign = await _quizRepository.AssignQuizToRoomAsync(quiz.Id, roomId);
 
-        if (asign)
+        if (assign)
         {
             var response = new QuizResponse(
                 quiz.Id,
@@ -103,7 +110,6 @@ public class QuizService : IQuizService
                 quiz.Duration ?? 0,
                 quiz.AI ?? false,
                 quiz.Hash?.FileHash ?? "manual"
-
             );
 
             return Result.Success(response);
@@ -111,6 +117,7 @@ public class QuizService : IQuizService
 
         return Result.Failure<QuizResponse>(QuizErrors.AssignmentNotFound);
     }
+
 
     public async Task<Result<QuizResponse>> UpdateQuizAsync(int id, UpdateQuizRequest request)
     {
@@ -425,5 +432,28 @@ public class QuizService : IQuizService
     public async Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds)
     {
         return await _quizGenerationService.SaveSelectedQuestionsAsync(quizId, selectedQuestionIds);
+    }
+
+    public async Task<Result<QuizResponse>> ToggleStatus(int quizId)
+    {
+        var quiz = await _quizRepository.GetByIdAsync(quizId);
+        if (quiz == null)
+            return Result.Failure<QuizResponse>(QuizErrors.NotFound);
+        quiz.AI = !quiz.AI;
+
+        await _quizRepository.Update(quiz);
+
+        return Result.Success(new QuizResponse(
+            quiz.Id,
+            quiz.Title,
+            quiz.Description,
+            quiz.IsDisabled,
+            quiz.TotalQuestions,
+            quiz.StartAt ?? DateTimeOffset.UtcNow,
+            quiz.EndAt ?? DateTimeOffset.UtcNow,
+            quiz.Duration ?? 0,
+            quiz.AI ?? false,
+            quiz.Hash?.FileHash ?? "manual"
+            ));
     }
 }

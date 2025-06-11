@@ -86,6 +86,14 @@ namespace Edu_QuizGen.Controllers
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
         }
 
+
+        [HttpPut("toggle/{quizId}")]
+        public async Task<IActionResult> ToggleStatus(int quizId)
+        {
+            var result = await _quizService.ToggleStatus(quizId);
+            return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuiz(int id)
         {

@@ -101,8 +101,8 @@ public class QuizGenerationService : IQuizGenerationService
     {
         try
         {
-            var questions = await _questionRepository.GetQuestionsByQuizId(quizId);
-            var generatedQuestions = questions.Where(q => !q.IsDisabled).ToList();
+            var questions = await _questionRepository.GetGeneratedQuestionsByQuizId(quizId);
+            var generatedQuestions = questions.Where(q => !q.IsDisabled && q.Quiz.Hash.FileHash !=null ).ToList();
 
             return Result.Success(generatedQuestions);
         }

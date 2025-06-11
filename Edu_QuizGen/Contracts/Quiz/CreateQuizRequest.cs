@@ -7,7 +7,8 @@ public record CreateQuizRequest(
         string Title,
         string Description,
         int TotalQuestions,
-        DateTime StartAt,
-        DateTime EndAt,
-        int Duration
+        DateTimeOffset StartAt,
+        DateTimeOffset EndAt,
+        int Duration,
+        bool AI
 );

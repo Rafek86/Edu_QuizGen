@@ -35,9 +35,10 @@ public class QuizService : IQuizService
                 q.Description,
                 q.IsDisabled,
                 q.quizQuestions.Count(),
-                q.StartAt ?? DateTime.UtcNow,
-                q.EndAt ?? DateTime.UtcNow,
+                q.StartAt ?? DateTimeOffset.UtcNow,
+                q.EndAt ?? DateTimeOffset.UtcNow,
                 q.Duration ?? 0,
+                q.AI ?? false,
                 q.Hash?.FileHash ?? "manual"
             ));
 
@@ -56,9 +57,10 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.quizQuestions.Count(),
-            quiz.StartAt ?? DateTime.UtcNow,
-            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.StartAt ?? DateTimeOffset.UtcNow,
+            quiz.EndAt ?? DateTimeOffset.UtcNow,
             quiz.Duration ?? 0,
+            quiz.AI ?? false,
             quiz.Hash?.FileHash ?? "manual"
         );
 
@@ -75,7 +77,8 @@ public class QuizService : IQuizService
             IsDisabled = false,
             StartAt = request.StartAt,
             EndAt = request.EndAt,
-            Duration = (int) (request.EndAt -request.StartAt).TotalMinutes
+            Duration = (int) (request.EndAt -request.StartAt).TotalMinutes,
+            AI = request.AI
         };
         
         var room =await _roomRepository.GetByIdAsync(roomId);
@@ -95,9 +98,10 @@ public class QuizService : IQuizService
                 quiz.Description,
                 quiz.IsDisabled,
                 quiz.quizQuestions.Count(),
-                quiz.StartAt ?? DateTime.UtcNow,
-                quiz.EndAt ?? DateTime.UtcNow,
+                quiz.StartAt ?? DateTimeOffset.UtcNow,
+                quiz.EndAt ?? DateTimeOffset.UtcNow,
                 quiz.Duration ?? 0,
+                quiz.AI ?? false,
                 quiz.Hash?.FileHash ?? "manual"
 
             );
@@ -135,9 +139,10 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.quizQuestions.Count(),
-            quiz.StartAt ?? DateTime.UtcNow,
-            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.StartAt ?? DateTimeOffset.UtcNow,
+            quiz.EndAt ?? DateTimeOffset.UtcNow,
             quiz.Duration ?? 0,
+            quiz.AI ?? false,
             quiz.Hash?.FileHash ?? "manual"
         );
 
@@ -168,9 +173,10 @@ public class QuizService : IQuizService
             q.Description,
             q.IsDisabled,
             q.TotalQuestions,
-            q.StartAt ?? DateTime.UtcNow,
-            q.EndAt ?? DateTime.UtcNow,
+            q.StartAt ?? DateTimeOffset.UtcNow,
+            q.EndAt ?? DateTimeOffset.UtcNow,
             q.Duration ?? 0,
+            q.AI ?? false,
             q.Hash?.FileHash ?? "manual"
         ));
 
@@ -186,9 +192,10 @@ public class QuizService : IQuizService
             q.Description,
             q.IsDisabled,
             q.TotalQuestions,
-            q.StartAt ?? DateTime.UtcNow,
-            q.EndAt ?? DateTime.UtcNow,
+            q.StartAt ?? DateTimeOffset.UtcNow,
+            q.EndAt ?? DateTimeOffset.UtcNow,
             q.Duration ?? 0,
+            q.AI ?? false,
             q.Hash?.FileHash ?? "manual"
         ));
 
@@ -257,9 +264,10 @@ public class QuizService : IQuizService
             q.Description,
             q.IsDisabled,
             q.TotalQuestions, 
-            q.StartAt ?? DateTime.UtcNow,
-            q.EndAt ?? DateTime.UtcNow,
+            q.StartAt ?? DateTimeOffset.UtcNow,
+            q.EndAt ?? DateTimeOffset.UtcNow,
             q.Duration ?? 0,
+            q.AI ?? false,
             q.Hash?.FileHash ?? "manual"
         ));
 
@@ -278,9 +286,10 @@ public class QuizService : IQuizService
             quiz.Description,
             quiz.IsDisabled,
             quiz.TotalQuestions, 
-            quiz.StartAt ?? DateTime.UtcNow,
-            quiz.EndAt ?? DateTime.UtcNow,
+            quiz.StartAt ?? DateTimeOffset.UtcNow,
+            quiz.EndAt ?? DateTimeOffset.UtcNow,
             quiz.Duration ?? 0,
+            quiz.AI ?? false,
             quiz.Hash?.FileHash ?? "manual"
         );
 

@@ -59,8 +59,12 @@ namespace Edu_QuizGen.Repository
         public async Task<IEnumerable<Question>> GetQuestionsByQuizId(int QuizId)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.QuizId == QuizId && !s.IsDisabled).ToListAsync();
 
-        public async Task<IEnumerable<Question>> GetGeneratedQuestionsByQuizId(int QuizId )
-            => await _dbContext.Questions.Include(q => q.Quiz).ThenInclude(h => h.Hash).Include(o => o.Options).Where(s => s.QuizId == QuizId && !s.IsDisabled).ToListAsync();
+        public async Task<IEnumerable<Question>> GetGeneratedQuestionsByQuizId(int QuizId)
+        {
+
+          var x =  await _dbContext.Questions.Include(q => q.Quiz).ThenInclude(h => h.Hash).Include(o => o.Options).Where(s => s.QuizId == QuizId && !s.IsDisabled).ToListAsync();
+            return x;
+        }
 
         public async Task<IEnumerable<Question>> GetQuestionsByQuizTitle(string QuizTitle)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Quiz.Title == QuizTitle && !s.IsDisabled).ToListAsync();

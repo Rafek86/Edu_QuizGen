@@ -309,52 +309,79 @@ public class QuizService : IQuizService
             var duplicateCheckResult = await _hashService.IsDuplicatePdfAsync(pdfFile);
             if (duplicateCheckResult.IsFailure)
                 return Result.Failure<List<QuestionResponse>>(duplicateCheckResult.Error);
-            
+
             if (duplicateCheckResult.Value.Exists)
             {
                 var existingQuizId = duplicateCheckResult.Value.Document.QuizId;
-                var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
 
-                if (existingQuestions.Any())
+                // If the existing quiz ID is different from the current quiz ID, duplicate the questions
+                if (existingQuizId != quizId)
                 {
-                    #region Old
-                    //var questionResponse = new List<QuestionResponse>();
+                    var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
 
-                    //foreach (var existingQuestion in existingQuestions.Where(q => !q.IsDisabled))
-                    //{
-                    //    var quizQuestion = new QuizQuestions
-                    //    {
-                    //        QuizId = quizId,
-                    //        QuistionId = existingQuestion.Id,
-                    //        IsDisabled = false
-                    //    };
+                    if (existingQuestions.Any())
+                    {
+                        var questionResponse = new List<QuestionResponse>();
 
-                    //    await _questionRepository.AddQuizQuestionAsync(quizQuestion);
+                        foreach (var existingQuestion in existingQuestions.Where(q => !q.IsDisabled))
+                        {
+                            // Create a new quiz question assignment for the new quiz
+                            var question = new Question
+                            {
+                                Text = existingQuestion.Text,
+                                Type = existingQuestion.Type,
+                                CorrectAnswer = existingQuestion.CorrectAnswer,
+                                Explanation = existingQuestion.Explanation,
+                                QuizId = quizId,
+                                IsDisabled = false,
+                                Options = existingQuestion.Options?.Select(opt => new Option
+                                {
+                                    Text = opt.Text,
+                                    IsDisabled = false
+                                }).ToList() ?? new List<Option>()
+                            };
 
-                    //    questionResponse.Add(new QuestionResponse
-                    //    {
-                    //        Id = existingQuestion.Id,
-                    //        Text = existingQuestion.Text,
-                    //        Type = existingQuestion.Type,
-                    //        CorrectAnswer = existingQuestion.CorrectAnswer,
-                    //        Explanation = existingQuestion.Explanation,
-                    //        Options = existingQuestion.Options?.Where(opt => !opt.IsDisabled)
-                    //            .Select(opt => new OptionResponse
-                    //            {
-                    //                Id = opt.Id,
-                    //                Text = opt.Text
-                    //            }).ToList()
-                    //    });
-                    //}
-                    //var currentQuiz = await _quizRepository.GetByIdAsync(quizId);
-                    //if (currentQuiz != null)
-                    //{
-                    //    currentQuiz.TotalQuestions = questionResponse.Count;
-                    //    await _quizRepository.Update(currentQuiz);
-                    //}
+                            await _questionRepository.AddAsync(question);
 
-                    //return Result.Success(questionResponse);
-                    #endregion
+                            questionResponse.Add(new QuestionResponse
+                            {
+                                Id = existingQuestion.Id,
+                                Text = existingQuestion.Text,
+                                Type = existingQuestion.Type,
+                                CorrectAnswer = existingQuestion.CorrectAnswer,
+                                Explanation = existingQuestion.Explanation,
+                                Options = existingQuestion.Options?.Where(opt => !opt.IsDisabled)
+                                    .Select(opt => new OptionResponse
+                                    {
+                                        Id = opt.Id,
+                                        Text = opt.Text
+                                    }).ToList()
+                            });
+                        }
+
+                        // Update the current quiz's total questions count
+                        var currentQuiz = await _quizRepository.GetByIdAsync(quizId);
+                        if (currentQuiz != null)
+                        {
+                            currentQuiz.TotalQuestions = questionResponse.Count;
+                            await _quizRepository.Update(currentQuiz);
+                        }
+
+                        // Save the hash for the new quiz as well
+                        var saveHashResults = await _hashService.SavePdfAsync(pdfFile, quizId);
+                        if (saveHashResults.IsFailure)
+                        {
+                            // Log the error but don't fail the entire operation since questions are already duplicated
+                            // You might want to handle this differently based on your requirements
+                        }
+
+                        return Result.Success(questionResponse);
+                    }
+                }
+                else
+                {
+                    // If it's the same quiz ID, just return the existing questions
+                    var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
                     return Result.Success(existingQuestions
                         .Where(q => !q.IsDisabled)
                         .Select(q => new QuestionResponse
@@ -371,10 +398,10 @@ public class QuizService : IQuizService
                                     Text = opt.Text
                                 }).ToList()
                         }).ToList());
-
                 }
             }
 
+            // If no duplicate hash found, generate new questions
             var result = await _quizGenerationService.GenerateQuestionsFromPdfAsync(quizId, pdfFile);
             if (result.IsFailure)
                 return Result.Failure<List<QuestionResponse>>(result.Error);
@@ -382,7 +409,7 @@ public class QuizService : IQuizService
             var saveHashResult = await _hashService.SavePdfAsync(pdfFile, quizId);
             if (saveHashResult.IsFailure)
             {
-               return Result.Failure<List<QuestionResponse>>(saveHashResult.Error);
+                return Result.Failure<List<QuestionResponse>>(saveHashResult.Error);
             }
 
             var questionResponses = result.Value.Select(q => new QuestionResponse

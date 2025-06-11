@@ -69,7 +69,3 @@ If you encounter any issues:
    dotnet restore
    dotnet build
    ```
-
-## Support
-
-For additional help or questions, please [open an issue](your-repository-issues-url) in the repository.

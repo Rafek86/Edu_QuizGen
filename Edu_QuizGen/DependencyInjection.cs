@@ -67,13 +67,12 @@ public static class DependencyInjection
         services.AddScoped<IQuizRepository, QuizRepository>();
         services.AddScoped<IRoomStudentRepository, RoomStudentRepository>();
 
+        services.AddHttpClient<IQuizGenerationService, QuizGenerationService>();
+        services.AddScoped<IQuizGenerationService, QuizGenerationService>();
+
         services.AddHttpContextAccessor();  
 
         services.AddProblemDetails();
-
-        services.AddHttpContextAccessor();
-
-       
 
         return services;
     }

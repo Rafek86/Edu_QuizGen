@@ -1,4 +1,5 @@
-﻿using Edu_QuizGen.Contracts.Quiz;
+﻿using Edu_QuizGen.Contracts.FastApi;
+using Edu_QuizGen.Contracts.Quiz;
 
 namespace Edu_QuizGen.Service_Abstraction;
 
@@ -16,4 +17,7 @@ public interface IQuizService
     Task<Result<QuizDetailResponse>> GetQuizWithDetailsAsync(int id);
     //Task<Result<IEnumerable<QuizResponse>>> GetActiveQuizzesAsync();
     Task<Result<QuizResponse>> GetQuizByHashAsync(string hashValue);
+    Task<Result<List<QuestionResponse>>> GenerateQuestionsAsync(int quizId, IFormFile pdfFile);
+    Task<Result<List<QuestionResponse>>> GetGeneratedQuestionsAsync(int quizId);
+    Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds);
 }

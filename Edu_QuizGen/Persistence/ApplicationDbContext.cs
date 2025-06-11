@@ -11,6 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Question> Questions { get; set; }
     public DbSet<Option> Options { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
+    public DbSet<QuizQuestions> QuizQuestions { get; set; }
     public DbSet<QuizRoom> QuizRooms { get; set; }
     public DbSet<StudentRoom> StudentRooms { get; set; }
     public DbSet<Hash> Hashes { get; set; } 

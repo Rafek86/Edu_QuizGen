@@ -2,6 +2,7 @@
 using Edu_QuizGen.Contracts.FastApi;
 using Edu_QuizGen.Contracts.Quiz;
 using Edu_QuizGen.Errors;
+using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
 
@@ -11,14 +12,17 @@ public class QuizService : IQuizService
 {
     private readonly IQuizRepository _quizRepository;
     private readonly IRoomRepository _roomRepository;
-    private readonly IHashRepository _hashRepository;
-    //private readonly IQuizGenerationService _quizGenerationService;
+    private readonly IHashService _hashService;
+    private readonly IQuizGenerationService _quizGenerationService;
+    private readonly IQuestionRepository _questionRepository;
 
-    public QuizService(IQuizRepository quizRepository, IHashRepository hashRepository, IRoomRepository roomRepository)
+    public QuizService(IQuizRepository quizRepository, IHashService hashService, IRoomRepository roomRepository, IQuizGenerationService quizGenerationService, IQuestionRepository questionRepository)
     {
         _quizRepository = quizRepository;
-        _hashRepository = hashRepository;
+        _hashService = hashService;
         _roomRepository = roomRepository;
+        _quizGenerationService = quizGenerationService;
+        _questionRepository = questionRepository;
     }
 
     public async Task<Result<IEnumerable<QuizResponse>>> GetAllQuizzesAsync()
@@ -282,54 +286,135 @@ public class QuizService : IQuizService
 
         return Result.Success(response);
     }
-    //public async Task<Result<List<QuestionResponse>>> GenerateQuestionsAsync(int quizId, IFormFile pdfFile)
-    //{
-    //    var result = await _quizGenerationService.GenerateQuestionsFromPdfAsync(quizId, pdfFile);
-    //    if (result.IsFailure)
-    //        return Result.Failure<List<QuestionResponse>>(result.Error);
+    public async Task<Result<List<QuestionResponse>>> GenerateQuestionsAsync(int quizId, IFormFile pdfFile)
+    {
+        try
+        {
+            var duplicateCheckResult = await _hashService.IsDuplicatePdfAsync(pdfFile);
+            if (duplicateCheckResult.IsFailure)
+                return Result.Failure<List<QuestionResponse>>(duplicateCheckResult.Error);
+            
+            if (duplicateCheckResult.Value.Exists)
+            {
+                var existingQuizId = duplicateCheckResult.Value.Document.QuizId;
+                var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
 
-    //    var questionResponses = result.Value.Select(q => new QuestionResponse
-    //    {
-    //        Id = q.Id,
-    //        Text = q.Text,
-    //        Type = q.Type,
-    //        CorrectAnswer = q.CorrectAnswer,
-    //        Explanation = q.Explanation,
-    //        Options = q.Options?.Select(opt => new OptionResponse
-    //        {
-    //            Id = opt.Id,
-    //            Text = opt.Text
-    //        }).ToList()
-    //    }).ToList();
+                if (existingQuestions.Any())
+                {
+                    #region Old
+                    //var questionResponse = new List<QuestionResponse>();
 
-    //    return Result.Success(questionResponses);
-    //}
+                    //foreach (var existingQuestion in existingQuestions.Where(q => !q.IsDisabled))
+                    //{
+                    //    var quizQuestion = new QuizQuestions
+                    //    {
+                    //        QuizId = quizId,
+                    //        QuistionId = existingQuestion.Id,
+                    //        IsDisabled = false
+                    //    };
 
-    //public async Task<Result<List<QuestionResponse>>> GetGeneratedQuestionsAsync(int quizId)
-    //{
-    //    var result = await _quizGenerationService.GetGeneratedQuestionsAsync(quizId);
-    //    if (result.IsFailure)
-    //        return Result.Failure<List<QuestionResponse>>(result.Error);
+                    //    await _questionRepository.AddQuizQuestionAsync(quizQuestion);
 
-    //    var questionResponses = result.Value.Select(q => new QuestionResponse
-    //    {
-    //        Id = q.Id,
-    //        Text = q.Text,
-    //        Type = q.Type,
-    //        CorrectAnswer = q.CorrectAnswer,
-    //        Explanation = q.Explanation,
-    //        Options = q.Options?.Select(opt => new OptionResponse
-    //        {
-    //            Id = opt.Id,
-    //            Text = opt.Text
-    //        }).ToList()
-    //    }).ToList();
+                    //    questionResponse.Add(new QuestionResponse
+                    //    {
+                    //        Id = existingQuestion.Id,
+                    //        Text = existingQuestion.Text,
+                    //        Type = existingQuestion.Type,
+                    //        CorrectAnswer = existingQuestion.CorrectAnswer,
+                    //        Explanation = existingQuestion.Explanation,
+                    //        Options = existingQuestion.Options?.Where(opt => !opt.IsDisabled)
+                    //            .Select(opt => new OptionResponse
+                    //            {
+                    //                Id = opt.Id,
+                    //                Text = opt.Text
+                    //            }).ToList()
+                    //    });
+                    //}
+                    //var currentQuiz = await _quizRepository.GetByIdAsync(quizId);
+                    //if (currentQuiz != null)
+                    //{
+                    //    currentQuiz.TotalQuestions = questionResponse.Count;
+                    //    await _quizRepository.Update(currentQuiz);
+                    //}
 
-    //    return Result.Success(questionResponses);
-    //}
+                    //return Result.Success(questionResponse);
+                    #endregion
+                    return Result.Success(existingQuestions
+                        .Where(q => !q.IsDisabled)
+                        .Select(q => new QuestionResponse
+                        {
+                            Id = q.Id,
+                            Text = q.Text,
+                            Type = q.Type,
+                            CorrectAnswer = q.CorrectAnswer,
+                            Explanation = q.Explanation,
+                            Options = q.Options?.Where(opt => !opt.IsDisabled)
+                                .Select(opt => new OptionResponse
+                                {
+                                    Id = opt.Id,
+                                    Text = opt.Text
+                                }).ToList()
+                        }).ToList());
 
-    //public async Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds)
-    //{
-    //    return await _quizGenerationService.SaveSelectedQuestionsAsync(quizId, selectedQuestionIds);
-    //}
+                }
+            }
+
+            var result = await _quizGenerationService.GenerateQuestionsFromPdfAsync(quizId, pdfFile);
+            if (result.IsFailure)
+                return Result.Failure<List<QuestionResponse>>(result.Error);
+
+            var saveHashResult = await _hashService.SavePdfAsync(pdfFile, quizId);
+            if (saveHashResult.IsFailure)
+            {
+               return Result.Failure<List<QuestionResponse>>(saveHashResult.Error);
+            }
+
+            var questionResponses = result.Value.Select(q => new QuestionResponse
+            {
+                Id = q.Id,
+                Text = q.Text,
+                Type = q.Type,
+                CorrectAnswer = q.CorrectAnswer,
+                Explanation = q.Explanation,
+                Options = q.Options?.Select(opt => new OptionResponse
+                {
+                    Id = opt.Id,
+                    Text = opt.Text
+                }).ToList()
+            }).ToList();
+
+            return Result.Success(questionResponses);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<List<QuestionResponse>>(QuizErrors.GenerationFailed);
+        }
+    }
+    public async Task<Result<List<QuestionResponse>>> GetGeneratedQuestionsAsync(int quizId)
+    {
+        var result = await _quizGenerationService.GetGeneratedQuestionsAsync(quizId);
+        if (result.IsFailure)
+            return Result.Failure<List<QuestionResponse>>(result.Error);
+
+        var questionResponses = result.Value.Select(q => new QuestionResponse
+        {
+            Id = q.Id,
+            Text = q.Text,
+            Type = q.Type,
+            CorrectAnswer = q.CorrectAnswer,
+            Explanation = q.Explanation,
+            Options = q.Options?.Select(opt => new OptionResponse
+            {
+                Id = opt.Id,
+                Text = opt.Text
+            }).ToList()  
+        }).ToList();
+
+        return Result.Success(questionResponses);
+    }
+
+    public async Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds)
+    {
+        return await _quizGenerationService.SaveSelectedQuestionsAsync(quizId, selectedQuestionIds);
+    }
 }

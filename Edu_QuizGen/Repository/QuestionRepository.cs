@@ -12,6 +12,12 @@ namespace Edu_QuizGen.Repository
             _dbContext = dbContext;
         }
 
+        public async Task AddQuizQuestionAsync(QuizQuestions quizQuestion)
+        {
+            await _dbContext.QuizQuestions.AddAsync(quizQuestion);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Question>> GetAllAsync() =>
             await _dbContext.Questions
                 .Where(s => !s.IsDisabled)
@@ -58,6 +64,15 @@ namespace Edu_QuizGen.Repository
 
         public async Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type)
             => await _dbContext.Questions.Include(o => o.Options).Where(s => s.Type == type && !s.IsDisabled).ToListAsync();
+
+        public async Task<List<QuizQuestions>> GetQuizQuestionsByQuizIdAsync(int quizId)
+        {
+            return  await _dbContext.QuizQuestions
+                .Include(q => q.question)
+                .ThenInclude(q => q.Options)
+                .Where(q => q.QuizId == quizId && !q.IsDisabled)
+                .ToListAsync();
+        }
 
         public async Task UpdateQuestion(Question question)
         {

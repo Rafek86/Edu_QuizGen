@@ -8,5 +8,7 @@
         public Task<IEnumerable<Question>> GetQuestionsByQuizTitle(string QuizTitle);
         public Task<IEnumerable<Question>> GetQuestionsByTypeAsync(QuestionType type);
         public Task UpdateQuestion(Question question);
+        Task AddQuizQuestionAsync(QuizQuestions quizQuestion);
+        Task<List<QuizQuestions>> GetQuizQuestionsByQuizIdAsync(int quizId);
     }
 }

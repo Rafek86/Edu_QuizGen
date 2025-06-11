@@ -15,7 +15,7 @@ public class CreateQuizRequestValidator : AbstractValidator<CreateQuizRequest>
         RuleFor(x => x.TotalQuestions)
             .GreaterThan(0).WithMessage("Total questions must be at least 1");
 
-        RuleFor(x => x.DurationTime)
+        RuleFor(x => x.Duration)
             .InclusiveBetween(1, 180).WithMessage("Duration must be between 1 and 180 minutes");
 
         RuleFor(x => x.StartAt)

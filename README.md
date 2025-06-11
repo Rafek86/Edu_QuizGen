@@ -18,7 +18,7 @@
 
 2. **Clone the Repository**
    ```bash
-   git clone [your-repository-url]
+   git clone https://github.com/Rafek86/Edu_QuizGen.git
    cd Edu_QuizGen
    ```
 

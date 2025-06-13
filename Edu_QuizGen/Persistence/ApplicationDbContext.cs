@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<QuizQuestions> QuizQuestions { get; set; }
     public DbSet<QuizRoom> QuizRooms { get; set; }
+    public DbSet<QuizResult> QuizResults { get; set; }  
     public DbSet<StudentRoom> StudentRooms { get; set; }
     public DbSet<Hash> Hashes { get; set; } 
 

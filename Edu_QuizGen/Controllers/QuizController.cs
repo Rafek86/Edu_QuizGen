@@ -76,6 +76,19 @@ namespace Edu_QuizGen.Controllers
                 : BadRequest(result.Error);
         }
 
+
+        [HttpPost("create-quiz-with-student{roomId}")]
+        public async Task<IActionResult> CreateStudentQuiz([FromBody] CreateQuizRequest request, [FromRoute] string roomId = "fb13d1e7-e9af-4704-8544-e01cc0140d6c")
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _quizService.CreateQuizAsync(roomId,request);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(GetQuiz), new { id = result.Value.Id }, result.Value)
+                : BadRequest(result.Error);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuiz(int id, [FromBody] UpdateQuizRequest request)
         {
@@ -84,6 +97,20 @@ namespace Edu_QuizGen.Controllers
 
             var result = await _quizService.UpdateQuizAsync(id, request);
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        }
+
+        [HttpGet("by-student")]
+        public async Task<IActionResult> GetQuizzesByStudentIdQuery([FromQuery] string studentId)
+        {
+            if (string.IsNullOrWhiteSpace(studentId))
+                return BadRequest("Student ID is required");
+
+            var result = await _quizService.GetQuizzesByStudentIdAsync(studentId);
+
+            if (result.IsFailure)
+                return NotFound(result.Error);
+
+            return Ok(result.Value);
         }
 
 

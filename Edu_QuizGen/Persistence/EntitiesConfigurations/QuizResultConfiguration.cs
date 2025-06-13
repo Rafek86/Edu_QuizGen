@@ -6,7 +6,7 @@ public class QuizResultConfiguration : IEntityTypeConfiguration<QuizResult>
     {
         builder.HasOne(x => x.Student)
             .WithMany(x => x.QuizResults)
-            .HasForeignKey(x => x.StduentId);
+            .HasForeignKey(x => x.StudentId);
 
         builder.ToTable("QuizResults");
     }

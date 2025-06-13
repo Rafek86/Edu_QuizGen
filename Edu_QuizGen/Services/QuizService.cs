@@ -5,6 +5,7 @@ using Edu_QuizGen.Errors;
 using Edu_QuizGen.Repository;
 using Edu_QuizGen.Repository_Abstraction;
 using Edu_QuizGen.Service_Abstraction;
+using Microsoft.EntityFrameworkCore;
 using System;
 using TimeZoneConverter;
 
@@ -17,14 +18,18 @@ public class QuizService : IQuizService
     private readonly IHashService _hashService;
     private readonly IQuizGenerationService _quizGenerationService;
     private readonly IQuestionRepository _questionRepository;
+    private readonly IStudentRepository _studentRepository;
+    private readonly IQuizResultRepository _quizResult;
 
-    public QuizService(IQuizRepository quizRepository, IHashService hashService, IRoomRepository roomRepository, IQuizGenerationService quizGenerationService, IQuestionRepository questionRepository)
+    public QuizService(IQuizRepository quizRepository, IHashService hashService, IRoomRepository roomRepository, IQuizGenerationService quizGenerationService, IQuestionRepository questionRepository,IStudentRepository studentRepository, IQuizResultRepository quizResult)
     {
         _quizRepository = quizRepository;
         _hashService = hashService;
         _roomRepository = roomRepository;
         _quizGenerationService = quizGenerationService;
         _questionRepository = questionRepository;
+        _studentRepository = studentRepository;
+        _quizResult = quizResult;
     }
 
     public async Task<Result<IEnumerable<QuizResponse>>> GetAllQuizzesAsync()
@@ -156,6 +161,33 @@ public class QuizService : IQuizService
         return Result.Success(response);
     }
 
+    public async Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByStudentIdAsync(string studentId)
+    {
+        try
+        {
+            var quizzes = await _quizRepository.GetQuizzesByStudentIdAsync(studentId);
+
+            var response = quizzes.Select(q => new QuizResponse(
+                q.Id,
+                q.Title,
+                q.Description,
+                q.IsDisabled,
+                q.quizQuestions.Count(),
+                q.StartAt ?? DateTimeOffset.UtcNow,
+                q.EndAt ?? DateTimeOffset.UtcNow,
+                q.Duration ?? 0,
+                q.AI ?? false,
+                q.Hash?.FileHash ?? "manual"
+            ));
+
+            return Result.Success(response);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<IEnumerable<QuizResponse>>(QuizErrors.NotFound);
+        }
+    }
+
     public async Task<Result> DeleteQuizAsync(int id)
     {
         var quiz = await _quizRepository.GetByIdAsync(id);
@@ -208,6 +240,9 @@ public class QuizService : IQuizService
 
         return Result.Success(response);
     }
+
+   
+
 
     public async Task<Result> AssignQuizToRoomAsync(int quizId, string roomId)
     {
@@ -314,7 +349,6 @@ public class QuizService : IQuizService
             {
                 var existingQuizId = duplicateCheckResult.Value.Document.QuizId;
 
-                // If the existing quiz ID is different from the current quiz ID, duplicate the questions
                 if (existingQuizId != quizId)
                 {
                     var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
@@ -325,7 +359,6 @@ public class QuizService : IQuizService
 
                         foreach (var existingQuestion in existingQuestions.Where(q => !q.IsDisabled))
                         {
-                            // Create a new quiz question assignment for the new quiz
                             var question = new Question
                             {
                                 Text = existingQuestion.Text,
@@ -359,7 +392,6 @@ public class QuizService : IQuizService
                             });
                         }
 
-                        // Update the current quiz's total questions count
                         var currentQuiz = await _quizRepository.GetByIdAsync(quizId);
                         if (currentQuiz != null)
                         {
@@ -367,12 +399,10 @@ public class QuizService : IQuizService
                             await _quizRepository.Update(currentQuiz);
                         }
 
-                        // Save the hash for the new quiz as well
                         var saveHashResults = await _hashService.SavePdfAsync(pdfFile, quizId);
                         if (saveHashResults.IsFailure)
                         {
-                            // Log the error but don't fail the entire operation since questions are already duplicated
-                            // You might want to handle this differently based on your requirements
+                        
                         }
 
                         return Result.Success(questionResponse);
@@ -380,7 +410,6 @@ public class QuizService : IQuizService
                 }
                 else
                 {
-                    // If it's the same quiz ID, just return the existing questions
                     var existingQuestions = await _questionRepository.GetQuestionsByQuizId(existingQuizId);
                     return Result.Success(existingQuestions
                         .Where(q => !q.IsDisabled)
@@ -482,5 +511,53 @@ public class QuizService : IQuizService
             quiz.AI ?? false,
             quiz.Hash?.FileHash ?? "manual"
             ));
+    }
+
+    public async Task<Result<ResultResponse>> AddQuizResult(ResultRequest request)
+    {
+     
+        var student = await _studentRepository.GetByIdAsync(request.StudentId);
+
+        if (student == null || student.IsDisabled)
+            return Result.Failure<ResultResponse>(StudentErrors.NotFound);
+
+        var quiz = await _quizRepository.GetByIdAsync(request.QuizId);
+
+        if (quiz == null || quiz.IsDisabled)
+            return Result.Failure<ResultResponse>(QuizErrors.NotFound);
+
+
+
+        var cairoTimeZone = TZConvert.GetTimeZoneInfo("Africa/Cairo");
+        var currentTime = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.Utc, cairoTimeZone);
+
+        var quizResult = new QuizResult
+        {
+            StudentId = request.StudentId,
+            Score = request.Score,
+            QuizId = request.QuizId,
+            CompletedAt = currentTime,
+        };
+        await _quizResult.AddQuizResultAsync(quizResult);
+
+
+        return Result.Success(new ResultResponse(request.Score ,request.StudentId,request.QuizId,currentTime));
+    }
+
+    public async Task<Result<ResultResponse>> GetQuizResultById(int quizId, string studentId)
+    {
+        var quizResults = await _quizResult.GetQuizResultsByStudentIdAsync(studentId, quizId);
+
+        if (quizResults == null || quizResults.IsDisabled)
+            return Result.Failure<ResultResponse>(QuizErrors.NotFound);
+
+        var response = new ResultResponse(
+            quizResults.Score,
+            quizResults.StudentId,
+            quizResults.QuizId,
+            quizResults.CompletedAt.UtcDateTime
+        );
+
+        return Result.Success(response);
     }
 }

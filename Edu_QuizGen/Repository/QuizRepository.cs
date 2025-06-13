@@ -91,4 +91,21 @@ public class QuizRepository : GenericRepository<Quiz>, IQuizRepository
         await _dbContext.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<Quiz>> GetQuizzesByStudentIdAsync(string studentId)
+    {
+        var studentRoomIds = await _dbContext.StudentRooms
+       .Where(sr => sr.StudentId == studentId && !sr.IsDisabled)
+       .Select(sr => sr.RoomId)
+       .ToListAsync();
+
+        if (!studentRoomIds.Any())
+            return new List<Quiz>();
+
+        return await _dbContext.Quizzes
+            .Where(q => q.QuizRoom.Any(qr => studentRoomIds.Contains(qr.RoomId)) && !q.IsDisabled)
+            .Include(q => q.Hash)
+            .Include(q => q.quizQuestions)
+            .ToListAsync();
+    }
 }

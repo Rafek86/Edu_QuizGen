@@ -13,6 +13,7 @@ public interface IQuizService
     Task<Result<QuizResponse>> ToggleStatus(int quizId);
     Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByRoomIdAsync(string roomId);
     Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByTeacherIdAsync(string teacherId);
+    Task<Result<IEnumerable<QuizResponse>>> GetQuizzesByStudentIdAsync(string studentId);
     Task<Result> AssignQuizToRoomAsync(int quizId, string roomId);
     Task<Result> RemoveQuizFromRoomAsync(int quizId, string roomId);
     Task<Result<QuizDetailResponse>> GetQuizWithDetailsAsync(int id);
@@ -21,4 +22,9 @@ public interface IQuizService
     Task<Result<List<QuestionResponse>>> GenerateQuestionsAsync(int quizId, IFormFile pdfFile);
     Task<Result<List<QuestionResponse>>> GetGeneratedQuestionsAsync(int quizId);
     Task<Result> SaveSelectedQuestionsAsync(int quizId, List<int> selectedQuestionIds);
+
+
+    //Result 
+    Task<Result<ResultResponse>> AddQuizResult(ResultRequest request);
+    Task<Result<ResultResponse>> GetQuizResultById(int quizId ,string studentId);
 }

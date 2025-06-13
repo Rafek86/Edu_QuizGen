@@ -4,6 +4,7 @@ using Edu_QuizGen.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_QuizGen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613120452_addQuizResult")]
+    partial class addQuizResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -372,9 +375,9 @@ namespace Edu_QuizGen.Migrations
                             Id = 1,
                             AI = false,
                             Description = "A collection of general knowledge questions covering various topics",
-                            EndAt = new DateTimeOffset(new DateTime(2025, 6, 13, 12, 50, 14, 384, DateTimeKind.Unspecified).AddTicks(4934), new TimeSpan(0, 0, 0, 0, 0)),
+                            EndAt = new DateTimeOffset(new DateTime(2025, 6, 13, 12, 4, 51, 138, DateTimeKind.Unspecified).AddTicks(4957), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDisabled = false,
-                            StartAt = new DateTimeOffset(new DateTime(2025, 6, 13, 12, 50, 14, 384, DateTimeKind.Unspecified).AddTicks(4929), new TimeSpan(0, 0, 0, 0, 0)),
+                            StartAt = new DateTimeOffset(new DateTime(2025, 6, 13, 12, 4, 51, 138, DateTimeKind.Unspecified).AddTicks(4951), new TimeSpan(0, 0, 0, 0, 0)),
                             Title = "General Knowledge Quiz",
                             TotalQuestions = 5
                         });
@@ -406,8 +409,8 @@ namespace Edu_QuizGen.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTimeOffset>("CompletedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("bit");
@@ -693,16 +696,16 @@ namespace Edu_QuizGen.Migrations
                         {
                             Id = "11caefd4-1787-43cb-92b1-ec7a68d628c9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9a85c6f8-6a68-436b-9a6f-9ea1e92eadce",
+                            ConcurrencyStamp = "92b048e3-c5c7-42ab-b2f5-cc8bb44a780a",
                             Email = "JohnDoee@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
                             IsDisabled = false,
                             LastName = "Doee",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEA3mPh9xDcPspgRB6dRv+6cH8Heu4vC2OuVehBQHdWw1LpzD24LOQReSVKfRI9CSdQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEH626vv17dL+0FnQtvo9h2uXzzCi85LRw49oyzrMlcXmc27FaIhalPIq3W+lYgPkVw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "40c4fdf0-9455-47eb-ace5-79493a49e339",
+                            SecurityStamp = "598bbe6b-25de-4d4a-8d16-69f99b1adeff",
                             TwoFactorEnabled = false,
                             UserName = "JohnDoee@gmail.com",
                             profilePicture = "...",
@@ -725,20 +728,20 @@ namespace Edu_QuizGen.Migrations
                         {
                             Id = "11caefd4-1787-43cb-92b1-ec7a68d628c0",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e3656164-d256-4e95-b3b5-187aa2b69940",
+                            ConcurrencyStamp = "34dbb565-54f7-4b5e-8e43-4c7ed6423725",
                             Email = "JohnDoe@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
                             IsDisabled = false,
                             LastName = "Doe",
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAECyo7zLkFEiBpWxzbUPiEL8+7hlZ3juDiNjqSOqA8v8snSOlDduj0Q9jNAqQA2juoQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHE6aMtoG0id1fgFS+oLVemRhKRPYNN0jG3Ns7tvvqoeZgWdAwuJBMCbONd5zs22iQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "38ab88be-c4a9-4e45-b9a9-6b739caac9c5",
+                            SecurityStamp = "b424d6ed-d6c3-4412-852d-69b79f5a29e0",
                             TwoFactorEnabled = false,
                             UserName = "JohnDoe@gmail.com",
                             profilePicture = "...",
-                            HireDate = new DateTime(2025, 6, 13, 12, 50, 14, 604, DateTimeKind.Utc).AddTicks(8848)
+                            HireDate = new DateTime(2025, 6, 13, 12, 4, 51, 353, DateTimeKind.Utc).AddTicks(9940)
                         });
                 });
 

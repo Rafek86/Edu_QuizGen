@@ -54,6 +54,8 @@ public static class DependencyInjection
         services.AddScoped<IHashService, HashService>();
         services.AddScoped<IQuizService, QuizService>();
 
+        services.AddScoped<IQuizResultRepository, QuizResultRepository>();    
+
         services.AddScoped<IEmailSender, EmailService>();
 
         services.AddScoped<IStudentRepository, StudentRepository>();

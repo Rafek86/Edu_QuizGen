@@ -5,6 +5,7 @@ public interface IQuizRepository : IGenericRepository<Quiz>
     Task<IEnumerable<Quiz>> GetAllQuizzesByRoomId(string roomId);
     Task<Quiz?> GetQuizWithDetailsAsync(int quizId);
     Task<IEnumerable<Quiz>> GetQuizzesByTeacherIdAsync(string teacherId);
+    Task<IEnumerable<Quiz>> GetQuizzesByStudentIdAsync(string studentId);
     Task<bool> IsQuizAssignedToRoomAsync(int quizId, string roomId);
     Task<IEnumerable<Quiz>> GetActiveQuizzesAsync();
     Task<Quiz?> GetQuizByHashAsync(string hashValue);

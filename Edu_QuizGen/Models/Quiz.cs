@@ -15,6 +15,7 @@ namespace Edu_QuizGen.Models
         public bool? AI { get; set; } = false;
         public ICollection<QuizRoom> QuizRoom { get; set; } = new HashSet<QuizRoom>(); 
         public ICollection<QuizQuestions> quizQuestions { get; set; } = new List<QuizQuestions>();
+        public ICollection<QuizResult> QuizResults { get; set; } = new List<QuizResult>();
         public Hash Hash { get; set; }
     }
 }

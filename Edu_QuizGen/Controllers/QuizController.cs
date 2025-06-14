@@ -42,6 +42,12 @@ namespace Edu_QuizGen.Controllers
             var result = await _quizService.GetQuizzesByRoomIdAsync(roomId);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
+        [HttpGet("by-hidden-room/{roomId}")]
+        public async Task<IActionResult> GetQuizzesByHiddenRoom(string roomId= "fb13d1e7-e9af-4704-8544-e01cc0140d6c")
+        {
+            var result = await _quizService.GetQuizzesByRoomIdAsync(roomId);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
 
         [HttpGet("by-teacher/{teacherId}")]
         public async Task<IActionResult> GetQuizzesByTeacher(string teacherId)
